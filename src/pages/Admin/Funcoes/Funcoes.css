@@ -1,0 +1,42 @@
+.container_gerenciar{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.cima{
+    display: flex;
+    justify-content: center;
+    gap: 1pc;
+    flex-direction: row;
+    align-items: center;
+}
+#title_relatorio{
+    font-size: 1.9pc;
+    font-weight: 600;
+    color: var(--rosa);
+}
+#img_relatorio{
+    width: 10pc;
+}
+#relatorio{
+    border: solid 1px rgb(56, 56, 56);
+    border-radius: 2pc;
+    width: 19pc;
+    flex-direction: column;
+    align-items:center;
+
+}
+.relatorio{
+    display: flex;
+    justify-content: center;
+    
+
+}
+.infos{
+    text-align: center;
+}
+#title_gerenciar{
+    font-size: 2.5pc;
+    color: var(--primary);
+    font-weight: 200;
+}

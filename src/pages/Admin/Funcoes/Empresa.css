@@ -1,0 +1,89 @@
+.tudo {
+    padding: 20px;
+    background-color: #f5f5f5; 
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.container_empresa {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 24px;
+    color: #333;
+}
+
+#span {
+    color: var(--rosa);
+    font-size: 2pc;
+    font-weight: 500; 
+}
+
+.logout-button {
+    background-color: #dc3545; 
+    color: white;
+    border: none;
+}
+
+.search-area {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: white; 
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+.input-cpf {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.search-button {
+    width: 100%; 
+}
+.cliente-info {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: white; 
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cliente-image {
+    width: 100px; 
+    height: auto; 
+    border-radius: 50%; 
+    margin-top: 10px;
+}
+.bonus-image {
+    width: 7pc;
+    height: 13pc;
+    margin: 5px;
+}
+
+.bonus-images-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.bonus-images-container img {
+    margin: 5px;
+}
+
+.bonus-images-container img:nth-child(3n+1) {
+    clear: both;
+}
+#centro{
+    text-align: center;
+    font-size: 2.2pc;
+
+}
