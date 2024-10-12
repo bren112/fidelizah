@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from "../../../Supabase/createClient.js";
 import { message, Modal, Button, Input } from 'antd';
-import './Client.css'; // Importe o arquivo de estilo
+import './Client.css'; 
 
 function ClienteList() {
     const [clientes, setClientes] = useState([]);
@@ -98,6 +98,7 @@ function ClienteList() {
     };
 
     return (
+        <><br/>
         <div id="cliente-list-container">
             <div id="header">
                 <h2 id="header-title">Clientes da Empresa {empresa?.nome}</h2>
@@ -158,6 +159,7 @@ function ClienteList() {
                 </Modal>
             )}
         </div>
+        </>
     );
 }
 

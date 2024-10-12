@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from "../../../Supabase/createClient.js";
 import { useNavigate } from 'react-router-dom';
 import { Input, Button, message, Modal } from 'antd';
-import InputMask from 'react-input-mask'; // Importando o InputMask
+import InputMask from 'react-input-mask'; 
 import './Empresa.css';
 
 function Empresa() {
@@ -82,7 +82,7 @@ function Empresa() {
         }
     };
 
-    // Função para gerar a lista de imagens de bônus
+    // imagens de bônus
     const renderBonusImages = (bonusCount) => {
         const bonusImages = [];
         for (let i = 0; i < bonusCount; i++) {

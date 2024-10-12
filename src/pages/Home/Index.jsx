@@ -13,9 +13,11 @@ function Home() {
                     <br />
                     Suas Recompensas
                 </h1>
+                <img src={img} id='imgHomeMobile' alt="imgHome" />
+
                 <br />
-                <Link to="/sobre">
-                    <button id='buttonHome'>Como Funciona?</button>
+                <Link to="/login">
+                    <button id='buttonHome'>Meus Bônus!</button>
                 </Link>
             </div>
             <div className="dir">

@@ -5,6 +5,8 @@
 }
 #imgHome{
     width: 40pc;
+    display: block;
+
 }
 .esq{
     display: flex;
@@ -14,6 +16,8 @@
 }
 #title_home{
     font-size: 2.3pc;
+    margin-top: 0pc;
+
 }
 #span_home{
     color: var(--rosa);
@@ -27,4 +31,21 @@
     width: 15pc;
     height: 3pc;
     color: white;
+}
+#imgHomeMobile{
+    width: 20pc;
+    display: none;
+}
+@media (max-width: 768px) {
+    #imgHomeMobile{
+        width: 20pc;
+        display: block;
+    }
+    #imgHome{
+        display: none;
+    }
+    #title_home{
+        font-size: 2pc;
+        margin-top: 4pc;
+    }
 }

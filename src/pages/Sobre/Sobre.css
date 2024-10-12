@@ -12,3 +12,8 @@
     max-width: 34pc;
     text-align: justify;
 }
+@media (max-width: 768px) {
+#img{
+    width: 23pc;
+}
+}

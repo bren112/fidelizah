@@ -1,0 +1,106 @@
+.empresa {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+}
+
+.empresa-img {
+    width: 15pc;
+    border-radius: 8px;
+    transition: filter 0.3s;
+}
+.empresa-img:hover{
+    /* transition: 0.9s;
+    width: 15.9pc; */
+}
+.empresa:hover .empresa-img {
+    filter: brightness(70%);
+    
+}
+
+.selected {
+    border: 3px solid var(--primary);
+    border-radius: 8px;
+}
+
+#p {
+    text-align: center;
+    color: rgb(164, 164, 164);
+}
+.tickets {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: center; 
+    gap: 1pc;
+    background-color: rgba(128, 128, 128, 0.081);
+    border-radius: 10px;
+    max-width: 30pc; 
+
+}
+
+.bonus-image_cliente {
+    width: 30%;
+    max-width: 150px; 
+}
+#red{
+    background-color: rgb(211, 38, 38);
+}
+
+@media (max-width: 768px) {
+    .container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .container h2{
+        text-align: center;
+    }
+    .empresa {
+        flex-basis: 100%;
+        margin: 5px;
+    }
+
+    .empresa-img {
+        width: 80%;
+        max-width: 120px;
+    }
+    .tickets {
+        display: flex;
+        flex-wrap: wrap; 
+        justify-content: center; 
+        gap: 1pc;
+        background-color: rgba(128, 128, 128, 0.081);
+        border-radius: 10px;
+        max-width: 30pc; 
+    
+    }
+    
+    .bonus-image_cliente {
+        width: 20%;
+        max-width: 150px; 
+    }
+}
+
+@media (max-width: 480px) {
+    .empresa-img {
+        max-width: 20pc;
+    }
+
+}
+#h2{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1pc;
+}
+#li{
+    color: var(--primary);
+    font-size: 1.7pc;
+    font-weight: 500;
+}
+.user{
+    display: flex;
+    justify-content: space-around;
+    margin: 1pc;
+}
