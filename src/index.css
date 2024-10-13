@@ -33,3 +33,6 @@ link{
   background-color: var(--primary);
   color: white;
 }
+input{
+  width: 15pc;
+}
