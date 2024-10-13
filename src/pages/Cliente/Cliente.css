@@ -10,9 +10,14 @@
     border-radius: 8px;
     transition: filter 0.3s;
 }
-.empresa-img:hover{
-    /* transition: 0.9s;
-    width: 15.9pc; */
+.pessoa{
+    display: flex;
+    gap: 1pc;
+ 
+}
+.pessoa img{
+    width: 6pc;
+    border-radius: 80pc;
 }
 .empresa:hover .empresa-img {
     filter: brightness(70%);
@@ -35,12 +40,12 @@
     gap: 1pc;
     background-color: rgba(128, 128, 128, 0.081);
     border-radius: 10px;
-    max-width: 30pc; 
+    max-width: 40pc; 
 
 }
 
 .bonus-image_cliente {
-    width: 30%;
+    width: 100%;
     max-width: 150px; 
 }
 #red{

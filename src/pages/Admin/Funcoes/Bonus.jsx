@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from "../../../Supabase/createClient.js";
 import { message, Modal, Button, Input } from 'antd';
-import './Client.css'; 
+import './Client.css'; // Importe o arquivo de estilo
 
 function ClienteList() {
     const [clientes, setClientes] = useState([]);

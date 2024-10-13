@@ -12,6 +12,7 @@
 }
 :root {
     --primary: #6c63ff;
+    --primary_light: #6b63ff99;
     --secondary: #000000;
     --ter: #ffffff;
     --cinza: #A4A1A1;
