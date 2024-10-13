@@ -51,7 +51,9 @@
 #red{
     background-color: rgb(211, 38, 38);
 }
-
+#ganho{
+    font-size: 2pc;
+}
 @media (max-width: 768px) {
     .container{
         display: flex;

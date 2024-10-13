@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, message } from 'antd';
+import { Button, message, Collapse } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../Supabase/createClient.js'; // Importando o Supabase
 import './Cliente.css';
+
+const { Panel } = Collapse; // Importa o Panel do Collapse
 
 function Cliente() {
     const [clienteEncontrado, setClienteEncontrado] = useState(null);
@@ -13,6 +15,7 @@ function Cliente() {
     const [selectedEmpresaImagem, setSelectedEmpresaImagem] = useState('');
     const [maxBonus, setMaxBonus] = useState(0); // Para armazenar o máximo de bônus
     const navigate = useNavigate();
+    const bonusImageUrl = 'https://i.pinimg.com/564x/a6/1c/8d/a61c8dd18d112d20a3e959071077ab10.jpg';
 
     useEffect(() => {
         const verificarCPF = async () => {
@@ -168,29 +171,24 @@ function Cliente() {
                         {selectedEmpresaId && (
                             <div>
                                 <p><span id='span'>{selectedBonusCount}/{maxBonus}</span></p>
-                                <div className='tickets'>
-                                    {Array(selectedBonusCount).fill(0).map((_, index) => (
-                                        <img 
-                                            key={index} 
-                                            src='https://jrbpwisclowinultbehj.supabase.co/storage/v1/object/public/ticket/ticket.png' // URL da imagem do ticket
-                                            alt={`Bônus ${index + 1}`} 
-                                            className="bonus-image_cliente" 
-                                        />
-                                    ))}
-                                </div>
+                                <Collapse accordion>
+                                    <Panel header="Ver Tickets" key="1">
+                                        <div className='tickets'>
+                                            {Array(selectedBonusCount).fill(0).map((_, index) => (
+                                                <img 
+                                                    key={index} 
+                                                    src='https://jrbpwisclowinultbehj.supabase.co/storage/v1/object/public/ticket/ticket.png' // URL da imagem do ticket
+                                                    alt={`Bônus ${index + 1}`} 
+                                                    className="bonus-image_cliente" 
+                                                />
+                                            ))}
+                                        </div>
+                                    </Panel>
+                                </Collapse>
                                 {selectedBonusCount >= maxBonus && (
                                     <div>
-                                        <Button 
-                                            type="primary" 
-                                            onClick={() => {
-                                                const empresaSelecionada = empresas.find(emp => emp.id === selectedEmpresaId);
-                                                const whatsappNumber = empresaSelecionada.whats; // Número do WhatsApp da empresa
-                                                const mensagem = `Olá! Sou o cliente e consegui todos os meus tickets da empresa ${empresaSelecionada.nome}.`;
-                                                window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(mensagem)}`, '_blank');
-                                            }}
-                                        >
-                                            🎁
-                                        </Button>
+                                        <p id='ganho'>🎉 Parabéns! Você ganhou o <span id='span'>Bônus!</span></p>
+                                   
                                     </div>
                                 )}
                             </div>
@@ -198,7 +196,7 @@ function Cliente() {
                     </div>
                 </div>
             ) : (
-                <p>Aguardando dados do cliente...</p>
+                <p>Nenhum cliente encontrado.</p>
             )}
         </div>
     );
