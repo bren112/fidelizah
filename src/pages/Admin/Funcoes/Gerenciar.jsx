@@ -1,85 +1,97 @@
-import React, { useState } from 'react';
-import { Input, Button, message } from 'antd';
-import InputMask from 'react-input-mask';
+import React, { useEffect, useState } from 'react';
+import { Button, message, Table } from 'antd';
 import { supabase } from "../../../Supabase/createClient.js";
-import './Funcoes.css'
 import { Link } from 'react-router-dom';
+import { format } from 'date-fns'; // Importando a função format
+import ptBR from 'date-fns/locale/pt-BR'; // Importando o locale para português do Brasil
+import './Funcoes.css';
 
 function Gerenciar() {
-    const [cpf, setCpf] = useState('');
-    const [cliente, setCliente] = useState(null);
+    const [relatorios, setRelatorios] = useState([]);
+    const [empresaId, setEmpresaId] = useState(null); // Para armazenar o ID da empresa logada
 
-    const handleSearch = async () => {
-        const { data, error } = await supabase
-            .from('clientes')
-            .select('*')
-            .eq('cpf', cpf)
-            .single();
+    useEffect(() => {
+        const fetchRelatorios = async () => {
+            const email = localStorage.getItem('token');
+            if (!email) {
+                message.error('Você não está logado.');
+                return;
+            }
 
-        if (error) {
-            message.error('Erro ao buscar cliente: ' + error.message);
-            setCliente(null);
-        } else {
-            setCliente(data);
-        }
-    };
+            // Busca o ID da empresa logada
+            const { data: empresaData, error: empresaError } = await supabase
+                .from('empresas')
+                .select('id')
+                .eq('email', email)
+                .single();
 
-    const getImageUrl = (genero) => {
-        switch (genero) {
-            case 'Masculino':
-                return 'https://i.pinimg.com/564x/c2/5b/2b/c25b2b0cd5673ba8dee127cf2a2ed340.jpg';
-            case 'Feminino':
-                return 'https://i.pinimg.com/564x/be/fc/a1/befca17ff3e353523f02f1e2431618ac.jpg';
-            default:
-                return 'https://i.pinimg.com/enabled/564x/d9/7b/bb/d97bbb08017ac2309307f0822e63d082.jpg';
-        }
-    };
+            if (empresaError) {
+                message.error('Erro ao buscar a empresa: ' + empresaError.message);
+                return;
+            }
+
+            setEmpresaId(empresaData.id); // Salva o ID da empresa logada
+
+            // Busca os relatórios da empresa logada
+            const { data: relatoriosData, error: relatoriosError } = await supabase
+                .from('relatorios')
+                .select('*')
+                .eq('empresa_id', empresaData.id); // Supondo que a tabela relatorios tenha empresa_id
+
+            if (relatoriosError) {
+                message.error('Erro ao buscar relatórios: ' + relatoriosError.message);
+                return;
+            }
+
+            setRelatorios(relatoriosData);
+        };
+
+        fetchRelatorios();
+    }, []);
+
+    const columns = [
+        {
+            title: 'Nome do Cliente',
+            dataIndex: 'cliente_nome', // Ajuste o nome do campo conforme sua tabela
+            key: 'cliente_nome',
+        },
+        {
+            title: 'Funcionário que Deu o Bônus',
+            dataIndex: 'funcionario_nome', // Corrigido para usar funcionario_nome
+            key: 'funcionario_nome',
+        },
+        {
+            title: 'Bônus Dado',
+            dataIndex: 'bonus_dado', // Usando a coluna bonus_dado
+            key: 'bonus_dado',
+        },
+        {
+            title: 'Data e Hora',
+            dataIndex: 'data_hora', // Ajuste o nome do campo conforme sua tabela
+            key: 'data_hora',
+            render: (text) => {
+                if (text) {
+                    // Formata a data para o formato brasileiro
+                    return format(new Date(text), 'dd/MM/yyyy HH:mm', { locale: ptBR });
+                }
+                return null;
+            },
+        },
+    ];
 
     return (
         <>
-        <Link to="/adm">
-        <button>Voltar</button>
-        </Link>
-        <div className="container">
-           
-            <h1 id='title_gerenciar'>Gerenciar Clientes</h1>
-            <br/>
-            <div className="cima">
-            <InputMask
-                mask="999.999.999-99"
-                placeholder="Buscar pelo CPF"
-                value={cpf}
-                onChange={(e) => setCpf(e.target.value)}
-                style={{ width: 300, marginBottom: 10 }}
-            />
-            <Button type="primary" onClick={handleSearch}>Buscar</Button>
-            <br/>
+            <br />
+            <Link to="/adm">
+                <Button id='voltar'>Voltar</Button>
+            </Link>
+            <br />
+            <br />
 
-            </div> </div>
+            <h2>Relatórios da Empresa</h2>
+            <br />
 
-            {cliente && (
-                <div className='relatorio'>
-
-                    <div id="relatorio">
-                        <div className="infos">
-                    <p id='title_relatorio'>{cliente.nome}</p>
-                    <img 
-                        src={getImageUrl(cliente.genero)} 
-                        alt={cliente.genero} 
-                        id='img_relatorio'
-
-                    />
-
-                    <p><strong>CPF:</strong> {cliente.cpf}</p>
-                    <p><strong>Telefone:</strong> {cliente.telefone}</p>
-                    <p><strong>Gênero:</strong> {cliente.genero}</p>
-                    </div>
-                    </div>
-                   
-                </div>
-                
-            )}
-       
+            <Table dataSource={relatorios} columns={columns} rowKey="id" />
         </>
     );
 }

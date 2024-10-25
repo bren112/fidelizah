@@ -3,6 +3,7 @@ import { supabase } from "../../../Supabase/createClient.js";
 import { useNavigate } from 'react-router-dom';
 import { Input, Button, message, Modal } from 'antd';
 import InputMask from 'react-input-mask'; 
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts'; // Importando o gráfico de pizza
 import './Empresa.css';
 
 function Empresa() {
@@ -82,22 +83,6 @@ function Empresa() {
         }
     };
 
-    // imagens de bônus
-    const renderBonusImages = (bonusCount) => {
-        const bonusImages = [];
-        for (let i = 0; i < bonusCount; i++) {
-            bonusImages.push(
-                <img
-                    key={i}
-                    src="https://i.pinimg.com/564x/a6/1c/8d/a61c8dd18d112d20a3e959071077ab10.jpg"
-                    alt="Imagem de bônus"
-                    className="bonus-image"
-                />
-            );
-        }
-        return bonusImages;
-    };
-
     const handleCloseClienteInfo = () => {
         setShowClienteInfo(false); // Oculta as informações do cliente
         setClienteEncontrado(null); // Limpa os dados do cliente
@@ -120,6 +105,25 @@ function Empresa() {
         return <p>{error}</p>;
     }
 
+    // Cores atualizadas para o gráfico de pizza
+    const COLORS = ['#6c63ff', '#ff6584'];
+
+    // Prepara os dados para o gráfico
+    const data = [
+        { name: 'Tickets atuais', value: clienteEncontrado?.bonus_count || 0 },
+        { name: 'Falta', value: Math.max((empresa?.max_bonus || 0) - (clienteEncontrado?.bonus_count || 0), 0) },
+    ];
+
+    // Função para lidar com o clique no botão de WhatsApp
+    const handleSendWhatsApp = () => {
+        const phone = clienteEncontrado.telefone;
+        const messageText = encodeURIComponent('Parabéns! Você atingiu todos os seus tickets e ganhou um presente!');
+        // Assegure-se de que o número está no formato internacional, sem espaços ou caracteres especiais
+        const formattedPhone = phone.replace(/\D/g, ''); // Remove tudo que não for dígito
+        const urlWhats = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${messageText}`;
+        window.open(urlWhats, '_blank');
+    };
+
     return (
         <div className="tudo">
             <div className="container_empresa">
@@ -138,7 +142,7 @@ function Empresa() {
                 <ul>
                     <li><Button type="link" onClick={() => navigate('/bonus')}>Bonificar</Button></li>
                     <li><Button type="link" onClick={() => navigate('/criar')}>Criar Cliente</Button></li>
-                    <li><Button type="link" onClick={() => navigate('/gc')}>GC</Button></li>
+                    <li><Button type="link" onClick={() => navigate('/gc')}>Relatório</Button></li>
                 </ul>
             </Modal>
 
@@ -159,25 +163,63 @@ function Empresa() {
                     <h3 id='centro'>Dados do Cliente:</h3>
                     <div className="container">
                         <div className="esquerda">
-                    <p id='title'>{clienteEncontrado.nome}</p>
-                    <img 
-                        src={getImageUrl(clienteEncontrado.genero)} 
-                        alt={`Imagem de ${clienteEncontrado.genero}`} 
-                        className="cliente-image"
-                    />
-                    <p><strong>Telefone:</strong> {clienteEncontrado.telefone}</p>
-                    <p><strong>CPF:</strong> {clienteEncontrado.cpf}</p>
-                    <p><strong>Gênero:</strong> {clienteEncontrado.genero}</p>
-                
+                            <p id='title'>{clienteEncontrado.nome}</p>
+                            <img 
+                                src={getImageUrl(clienteEncontrado.genero)} 
+                                alt={`Imagem de ${clienteEncontrado.genero}`} 
+                                className="cliente-image"
+                            />
+                            <p><strong>Telefone:</strong> {clienteEncontrado.telefone}</p>
+                            <p><strong>CPF:</strong> {clienteEncontrado.cpf}</p>
+                            <p><strong>Gênero:</strong> {clienteEncontrado.genero}</p>
+                        </div>
+                        <div className="dir">
+                            <h3>Bônus do Cliente:</h3>
+                            <p>Tickets atuais: {clienteEncontrado.bonus_count || 0}</p>
+                            <p>Máximo de tickets: {empresa.max_bonus}</p>
+<br/>
+                            {/* Gráfico */}
+                            <h3><span id='span'>Total de Tickets:</span></h3>
+                            <ResponsiveContainer width="100%" height={300}>
+                                <PieChart>
+                                    <Pie
+                                        data={data}
+                                        dataKey="value"
+                                        nameKey="name"
+                                        cx="50%"
+                                        cy="50%"
+                                        outerRadius={100}
+                                        fill="#8884d8"
+                                        label
+                                    >
+                                        {data.map((entry, index) => (
+                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                    <Legend />
+                                </PieChart>
+                            </ResponsiveContainer>
+
+                           
+                            { (clienteEncontrado.bonus_count >= empresa.max_bonus) && (
+                                <Button 
+                                    type="primary" 
+                                    onClick={handleSendWhatsApp} 
+                                    className="whatsapp-button"
+                                    style={{ 
+                                        marginTop: '20px', 
+                                        backgroundColor: '#6c63ff', 
+                                        borderColor: '#6c63ff' 
+                                    }}
+                                >
+                                    Enviar Mensagem de Ganho!
+                                </Button>
+                            )}
+
+                            <Button type="default" onClick={handleCloseClienteInfo} className="close-button">Fechar</Button>
+                        </div>
                     </div>
-                    <div className="dir">
-                    <h3>Bônus do Cliente:</h3>
-                    <div className="bonus-images-container">
-                        {renderBonusImages(clienteEncontrado.bonus_count || 0)}
-                    </div>
-                    <Button type="default" onClick={handleCloseClienteInfo} className="close-button">Fechar</Button>
-                </div>
-                </div>
                 </div>
             )}
         </div>

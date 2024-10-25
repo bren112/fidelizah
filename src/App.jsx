@@ -11,6 +11,7 @@ import Criar from "./pages/Admin/Funcoes/Criar";
 import Gerenciar from "./pages/Admin/Funcoes/Gerenciar";
 import Empresa from "./pages/Admin/Funcoes/Empresa";
 import Bonus from "./pages/Admin/Funcoes/Bonus";
+import Teste from "./pages/test/Teste";
 function App() {
   return (
     <BrowserRouter>
@@ -28,6 +29,7 @@ function App() {
             <Route path="/gc" element={<Gerenciar />} />
             <Route path="/empresalogada" element={<Empresa />} />
             <Route path="/bonus" element={<Bonus />} />
+            <Route path="/teste" element={<Teste />} />
 
          
           </Routes>
