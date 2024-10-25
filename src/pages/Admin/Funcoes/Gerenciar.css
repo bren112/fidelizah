@@ -1,0 +1,19 @@
+.custom-table .ant-table-thead > tr > th {
+    background-color: #6c63ff; 
+    color: white; 
+    font-weight: bold; 
+}
+
+.custom-table .ant-table-tbody > tr > td {
+    color: #333; 
+}
+
+
+.custom-table .ant-table-tbody > tr:hover {
+    background-color: rgba(108, 99, 255, 0.1); 
+}
+#title_gerenciar{
+    text-align: center;
+    font-weight: 600;
+    color: var(--rosa);
+}
