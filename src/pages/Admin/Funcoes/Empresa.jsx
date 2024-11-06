@@ -142,6 +142,7 @@ function Empresa() {
                 <ul>
                     <li><Button type="link" onClick={() => navigate('/bonus')}>Bonificar</Button></li>
                     <li><Button type="link" onClick={() => navigate('/criar')}>Criar Cliente</Button></li>
+                    <li><Button type="link" onClick={() => navigate('/max')}>Gerenciar Bônus</Button></li>
                     <li><Button type="link" onClick={() => navigate('/gc')}>Relatório</Button></li>
                 </ul>
             </Modal>

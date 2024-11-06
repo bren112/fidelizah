@@ -1,5 +1,10 @@
 #voltar{
     margin-left: 2pc;
+    background-color: rgba(139, 69, 19, 0);
+    border: solid 1px gray;
+    border-radius: 5px;
+    width: 4pc;
+    height: 2pc;
 }
 #cliente-list-container {
     max-width: 600px;
