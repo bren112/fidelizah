@@ -66,7 +66,7 @@ function ClienteList() {
         }
 
         const dataHora = dayjs().format('YYYY-MM-DD HH:mm:ss');
-        const novoBonusCount = (parseInt(clienteSelecionado.bonus_count) || 0) + parseInt(bonusQuantidade);
+        const novoBonusCount = (parseInt(clienteSelecionado.bonus_count) || 0) - Math.abs(parseInt(bonusQuantidade)); // Subtrai a quantidade de bônus
 
         // Atualiza o bonus_count do cliente na tabela `clientes`
         const { error: bonusError } = await supabase
@@ -87,7 +87,7 @@ function ClienteList() {
                 cliente_nome: clienteSelecionado.nome,
                 funcionario_nome: funcionarioNome,
                 data_hora: dataHora,
-                bonus_dado: bonusQuantidade // Armazena a quantidade de bônus dada no relatório
+                bonus_dado: -Math.abs(bonusQuantidade) // Armazena a quantidade de bônus como negativa no relatório
             });
 
         if (relatorioError) {
@@ -184,8 +184,6 @@ function ClienteList() {
                 </Modal>
             )}
         </div>
-        
-
         </>
     );
 }

@@ -126,11 +126,23 @@ function Empresa() {
 
     return (
         <div className="tudo">
+                      {empresa.imagem && (
+                <div className="empresa-image-container">
+                    <img 
+                        id='-imgempresa'
+                        src={empresa.imagem} 
+                        alt="Imagem da empresa" 
+                        className="empresa-image" 
+                    />
+                </div>
+            )}
             <div className="container_empresa">
+                
                 <h1 id='tile'>Olá <span id='span'>{empresa.nome}</span></h1>
                 <Button type="default" onClick={handleLogout} className="logout-button">Sair</Button>
+          
             </div>
-
+  
             <Button type="primary" onClick={handleOpenLinksModal} id='btnprincipal1' className="links-button">Minhas Ações</Button>
 
             <Modal
