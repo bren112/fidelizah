@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, message, Table } from 'antd';
+import { Button, message, Table, Input } from 'antd';
 import { supabase } from "../../../Supabase/createClient.js";
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -11,6 +11,7 @@ function Gerenciar() {
     const [relatorios, setRelatorios] = useState([]);
     const [empresaId, setEmpresaId] = useState(null);
     const [empresaNome, setEmpresaNome] = useState(''); // Novo estado para armazenar o nome da empresa
+    const [filtroCliente, setFiltroCliente] = useState(''); // Estado para o filtro do nome do cliente
 
     useEffect(() => {
         const fetchRelatorios = async () => {
@@ -49,6 +50,16 @@ function Gerenciar() {
 
         fetchRelatorios();
     }, []);
+
+    // Filtra os relatórios com base no nome do cliente
+    const filtrarRelatorios = () => {
+        if (!filtroCliente) {
+            return relatorios;
+        }
+        return relatorios.filter(relatorio =>
+            relatorio.cliente_nome.toLowerCase().includes(filtroCliente.toLowerCase())
+        );
+    };
 
     const columns = [
         {
@@ -89,8 +100,18 @@ function Gerenciar() {
             <br />
             <h2 id='title_gerenciar'>Relatórios da Empresa {empresaNome}</h2>
             <br />
+
+            {/* Campo de filtro para o nome do cliente */}
+            <Input
+            id='minput'
+                placeholder="Filtrar por nome do cliente"
+                value={filtroCliente}
+                onChange={(e) => setFiltroCliente(e.target.value)}
+                style={{ width: 300, marginBottom: 20 }}
+            />
+
             <Table
-                dataSource={relatorios}
+                dataSource={filtrarRelatorios()} // Usa o filtro aplicado
                 columns={columns}
                 rowKey="id"
                 pagination={{ pageSize: 5 }} // Número de itens por página

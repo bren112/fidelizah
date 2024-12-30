@@ -264,7 +264,7 @@ function Produtos() {
                     <div className="modal_content">
                     <button id='cancelar' onClick={handleCloseModal}>X</button>
                     <div className="centroModal">
-                    <h3 id='nome'>{selectedProduct.nome}</h3>
+                    <h3 id='nomeModal'>{selectedProduct.nome}</h3>
                         <img src={selectedProduct.imagem} alt={selectedProduct.nome} className="produto_modal_imagem" />
                         <p id='desc'>{selectedProduct.descricao}</p>
                         

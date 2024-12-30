@@ -7,6 +7,9 @@
 .custom-table .ant-table-tbody > tr > td {
     color: #333; 
 }
+#minput{
+    margin-left: 2pc;
+}
 
 
 .custom-table .ant-table-tbody > tr:hover {

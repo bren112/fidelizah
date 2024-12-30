@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, message } from 'antd';
+import { Table, Button, message, Input } from 'antd';
 import { supabase } from '../../../Supabase/createClient.js';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -11,6 +11,7 @@ function RelatorioProduto() {
   const [loading, setLoading] = useState(true);
   const [messageText, setMessage] = useState('');
   const [empresaNome, setEmpresaNome] = useState('');
+  const [filtroUsuario, setFiltroUsuario] = useState(''); // Estado para o filtro do nome do usuário
 
   useEffect(() => {
     const fetchRelatorio = async () => {
@@ -78,6 +79,16 @@ function RelatorioProduto() {
     fetchRelatorio();
   }, []);
 
+  // Função para filtrar os relatórios com base no nome do usuário
+  const filtrarRelatorio = () => {
+    if (!filtroUsuario) {
+      return relatorio;
+    }
+    return relatorio.filter(item =>
+      item.usuario_nome.toLowerCase().includes(filtroUsuario.toLowerCase())
+    );
+  };
+
   const columns = [
     {
       title: 'Nome do Produto',
@@ -117,9 +128,19 @@ function RelatorioProduto() {
       <br />
       <h2 id="title_gerenciar">Relatório de Produtos Resgatados - {empresaNome}</h2>
       <br />
+      
+      {/* Campo de filtro para o nome do usuário */}
+      <Input
+      id='minput'
+        placeholder="Filtrar por nome do usuário"
+        value={filtroUsuario}
+        onChange={(e) => setFiltroUsuario(e.target.value)}
+        style={{ width: 300, marginBottom: 20 }}
+      />
+
       {messageText && <p>{messageText}</p>}
       <Table
-        dataSource={relatorio}
+        dataSource={filtrarRelatorio()} // Usa o filtro aplicado
         columns={columns}
         rowKey="id"
         pagination={{ pageSize: 5 }}
