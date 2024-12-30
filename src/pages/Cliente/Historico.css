@@ -1,0 +1,65 @@
+/* Historico.css */
+
+.historico-container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin: 20px auto;
+}
+
+.historico-title {
+    font-size: 2pc;
+    font-weight: bold;
+    color: var(--rosa);
+    margin-bottom: 1px;
+    text-align: center;
+}
+
+.produtos-title {
+    font-size: 20px;
+    color: #bdbdbd;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.produtos-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.produtos-table th, .produtos-table td {
+    padding: 12px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.produtos-table th {
+    background-color: var(--rosa);
+    color: white;
+}
+
+.produtos-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.produtos-table tr:hover {
+    background-color: #ddd;
+}
+
+.loading {
+    text-align: center;
+    font-size: 18px;
+    color: #888;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    text-align: center;
+}

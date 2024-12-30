@@ -15,6 +15,7 @@ import Teste from "./pages/test/Teste";
 import Max from "./pages/Admin/Funcoes/Max";
 import Produtos from "./pages/Cliente/Produtos";
 import RelatorioProduto from "./pages/Admin/Funcoes/RelatorioProduto";
+import Historico from "./pages/Cliente/Historico";
 function App() {
   return (
     <BrowserRouter>
@@ -36,6 +37,7 @@ function App() {
             <Route path="/max" element={<Max />} />
             <Route path="/produtos" element={<Produtos />} />
             <Route path="/relatorio" element={<RelatorioProduto />} />
+            <Route path="/historico" element={<Historico />} />
 
          
           </Routes>

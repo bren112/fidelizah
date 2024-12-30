@@ -4,6 +4,20 @@
     align-items: center;
     margin: 10px;
 }
+.botoes2{
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    gap: 5px;
+}
+.historico{
+    color: #fff;
+    background: #1677ff;
+    border: none;
+    width: 3pc;
+    height: 2pc;
+    border-radius: 5px;
+}
 
 .empresa-img {
     width: 15pc;
