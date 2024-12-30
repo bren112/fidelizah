@@ -66,7 +66,7 @@ function ClienteList() {
         }
 
         const dataHora = dayjs().format('YYYY-MM-DD HH:mm:ss');
-        const novoBonusCount = (parseInt(clienteSelecionado.bonus_count) || 0) - Math.abs(parseInt(bonusQuantidade)); // Subtrai a quantidade de bônus
+        const novoBonusCount = (parseInt(clienteSelecionado.bonus_count) || 0) + parseInt(bonusQuantidade);
 
         // Atualiza o bonus_count do cliente na tabela `clientes`
         const { error: bonusError } = await supabase
@@ -87,7 +87,7 @@ function ClienteList() {
                 cliente_nome: clienteSelecionado.nome,
                 funcionario_nome: funcionarioNome,
                 data_hora: dataHora,
-                bonus_dado: -Math.abs(bonusQuantidade) // Armazena a quantidade de bônus como negativa no relatório
+                bonus_dado: parseInt(bonusQuantidade) // Armazena o valor correto
             });
 
         if (relatorioError) {
@@ -127,7 +127,7 @@ function ClienteList() {
         <>
           <br/>
             <Link to="/adm">
-                <Button  id='voltar'>Voltar</Button>
+                <Button id='voltar'>Voltar</Button>
             </Link>
           <br/>
 
@@ -176,7 +176,6 @@ function ClienteList() {
                     <p><strong>Quantidade de Bônus:</strong></p>
                     <Input
                         type="number"
-                        min={1}
                         value={bonusQuantidade}
                         onChange={(e) => setBonusQuantidade(e.target.value)}
                     />

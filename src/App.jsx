@@ -13,6 +13,8 @@ import Empresa from "./pages/Admin/Funcoes/Empresa";
 import Bonus from "./pages/Admin/Funcoes/Bonus";
 import Teste from "./pages/test/Teste";
 import Max from "./pages/Admin/Funcoes/Max";
+import Produtos from "./pages/Cliente/Produtos";
+import RelatorioProduto from "./pages/Admin/Funcoes/RelatorioProduto";
 function App() {
   return (
     <BrowserRouter>
@@ -32,6 +34,8 @@ function App() {
             <Route path="/bonus" element={<Bonus />} />
             <Route path="/teste" element={<Teste />} />
             <Route path="/max" element={<Max />} />
+            <Route path="/produtos" element={<Produtos />} />
+            <Route path="/relatorio" element={<RelatorioProduto />} />
 
          
           </Routes>

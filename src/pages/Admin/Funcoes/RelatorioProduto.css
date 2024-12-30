@@ -1,0 +1,33 @@
+/* Estilo para a tabela de relatório */
+.relatorio-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .relatorio-table th,
+  .relatorio-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  
+  .relatorio-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+  }
+  
+  .relatorio-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .relatorio-table tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .relatorio-table td {
+    font-size: 14px;
+    color: #333;
+  }
+  

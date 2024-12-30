@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { supabase } from '../../../Supabase/createClient.js'; // Ajuste o caminho para seu arquivo Supabase
-import { useNavigate } from 'react-router-dom'; // Para navegação
-import './Max.css'; // Importa o arquivo CSS
+import { supabase } from '../../../Supabase/createClient.js';
+import { useNavigate } from 'react-router-dom';
 
-function Max() {
-    const [maxBonus, setMaxBonus] = useState(null);
-    const [loading, setLoading] = useState(true);
+function CriarProduto() {
+    const [empresaLogada, setEmpresaLogada] = useState(null); // Dados da empresa logada
+    const [produto, setProduto] = useState({
+        nome: '',
+        descricao: '',
+        preco: '',
+        imagem: ''
+    });
     const [error, setError] = useState(null);
-    const [newMaxBonus, setNewMaxBonus] = useState(''); // Estado para o novo valor de max_bonus
-    const navigate = useNavigate(); // Hook para navegação
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchMaxBonus = async () => {
-            const token = localStorage.getItem('token'); // Pegando o token do localStorage (pode ser o e-mail)
+        const fetchEmpresaLogada = async () => {
+            const token = localStorage.getItem('token'); // Token da empresa logada
 
             if (!token) {
                 setError('Nenhuma empresa logada.');
@@ -20,88 +24,190 @@ function Max() {
                 return;
             }
 
-            // Buscando a empresa logada e o max_bonus
             const { data, error } = await supabase
                 .from('empresas')
-                .select('max_bonus')
-                .eq('email', token) // Ou outro campo correspondente ao token
-                .single(); // Para buscar uma única empresa
+                .select('*')
+                .eq('email', token)
+                .single();
 
             if (error) {
                 setError('Erro ao buscar dados da empresa: ' + error.message);
             } else {
-                setMaxBonus(data.max_bonus);
+                setEmpresaLogada(data);
             }
+
             setLoading(false);
         };
 
-        fetchMaxBonus();
+        fetchEmpresaLogada();
     }, []);
 
-    // Função para atualizar o max_bonus no banco de dados
-    const updateMaxBonus = async () => {
-        const token = localStorage.getItem('token'); // Pegando o token do localStorage
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setProduto((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    };
 
-        if (!token) {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!empresaLogada) {
             setError('Nenhuma empresa logada.');
             return;
         }
 
-        if (newMaxBonus < 0) {
-            setError('O valor não pode ser negativo.');
-            return;
-        }
-
         const { data, error } = await supabase
-            .from('empresas')
-            .update({ max_bonus: newMaxBonus }) // Atualizando o max_bonus
-            .eq('email', token); // Usando o token como referência para a empresa
+            .from('produtos')
+            .insert({
+                nome: produto.nome,
+                descricao: produto.descricao,
+                preco: produto.preco,
+                imagem: produto.imagem,
+                empresa_id: empresaLogada.id // ID da empresa logada
+            });
 
         if (error) {
-            setError('Erro ao atualizar max_bonus: ' + error.message);
+            setError('Erro ao cadastrar o produto: ' + error.message);
         } else {
-            setMaxBonus(newMaxBonus); // Atualiza o estado com o novo valor
-            setNewMaxBonus(''); // Limpa o campo de input após atualização
-        }
-    };
-
-    const handleInputChange = (e) => {
-        const value = e.target.value;
-        // Impedir valores negativos
-        if (value >= 0) {
-            setNewMaxBonus(value);
+            alert('Produto cadastrado com sucesso!');
+            setProduto({ nome: '', descricao: '', preco: '', imagem: '' });
         }
     };
 
     if (loading) {
-        return <p>Carregando...</p>;
+        return <p style={styles.loading}>Carregando...</p>;
     }
 
     if (error) {
-        return <p>{error}</p>;
+        return <p style={styles.error}>{error}</p>;
     }
 
     return (
-        <>
-            <br />
-            <button id='voltar' onClick={() => navigate('/adm')}>Voltar</button>
-
-            <div className="max-container">
-                <h1>Max de Bônus p/ Ganhar!</h1>
-                <p><strong>Máximo de Bônus Atual:</strong> {maxBonus}</p>
-
-                {/* Input para alterar o max_bonus */}
-                <input
-                    type="number"
-                    value={newMaxBonus}
-                    onChange={handleInputChange} // Validação de valor negativo
-                    placeholder="Novo valor de max_bonus"
-                    className="max-input"
-                />
-                <button onClick={updateMaxBonus} className="max-button">Alterar Max de Bônus</button>
-            </div>
-        </>
+        <div style={styles.container}>
+            <button style={styles.backButton} onClick={() => navigate('/adm')}>
+                Voltar
+            </button>
+            <h1 style={styles.title}>Cadastrar Produto</h1>
+            <form onSubmit={handleSubmit} style={styles.form}>
+                <label style={styles.label}>
+                    Nome do Produto:
+                    <input
+                        type="text"
+                        name="nome"
+                        value={produto.nome}
+                        onChange={handleChange}
+                        required
+                        style={styles.input}
+                    />
+                </label>
+                <label style={styles.label}>
+                    Descrição:
+                    <textarea
+                        name="descricao"
+                        value={produto.descricao}
+                        onChange={handleChange}
+                        style={{ ...styles.input, height: '100px' }}
+                    />
+                </label>
+                <label style={styles.label}>
+                    Preço:
+                    <input
+                        type="number"
+                        name="preco"
+                        value={produto.preco}
+                        onChange={handleChange}
+                        step="0.01"
+                        required
+                        style={styles.input}
+                    />
+                </label>
+                <label style={styles.label}>
+                    URL da Imagem:
+                    <input
+                        type="text"
+                        name="imagem"
+                        value={produto.imagem}
+                        onChange={handleChange}
+                        style={styles.input}
+                    />
+                </label>
+                <button type="submit" style={styles.submitButton}>
+                    Cadastrar Produto
+                </button>
+            </form>
+        </div>
     );
 }
 
-export default Max;
+const styles = {
+    container: {
+        fontFamily: "'Poppins', sans-serif",
+        padding: '20px',
+        maxWidth: '600px',
+        margin: '0 auto',
+        backgroundColor: '#f9f9f9',
+        borderRadius: '8px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    },
+    backButton: {
+        fontFamily: "'MuseoModerno', cursive",
+        color: '#878787',
+        backgroundColor: '#f9f9f9',
+
+        border: 'none',
+        padding: '10px 20px',
+        cursor: 'pointer',
+        borderRadius: '4px',
+        marginBottom: '20px',
+    },
+    title: {
+        fontFamily: "'MuseoModerno', cursive",
+        fontSize: '24px',
+        color: '#333',
+        textAlign: 'center',
+        marginBottom: '20px',
+    },
+    form: {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '15px',
+    },
+    label: {
+        fontSize: '16px',
+        color: '#333',
+        marginBottom: '5px',
+    },
+    input: {
+        width: '100%',
+        padding: '10px',
+        fontSize: '16px',
+        borderRadius: '4px',
+        border: '1px solid #ccc',
+    },
+    submitButton: {
+        fontFamily: "'MuseoModerno', cursive",
+        backgroundColor: 'var(--rosa)',
+        color: '#fff',
+        border: 'none',
+        padding: '10px 20px',
+        cursor: 'pointer',
+        borderRadius: '4px',
+        alignSelf: 'center',
+    },
+    loading: {
+        fontFamily: "'Poppins', sans-serif",
+        fontSize: '18px',
+        color: '#555',
+        textAlign: 'center',
+    },
+    error: {
+        fontFamily: "'Poppins', sans-serif",
+        fontSize: '18px',
+        color: 'red',
+        textAlign: 'center',
+    },
+};
+
+export default CriarProduto;
