@@ -79,8 +79,8 @@
 .produto_card button {
     background-color: var(--primary);
     color: white;
-    padding: 15px 40px;
-    font-size: 2pc;
+    padding: 10px 40px;
+    font-size: 1pc;
     border-radius: 5px;
     cursor: pointer;
     border: none;
@@ -228,7 +228,16 @@ p.success {
     .modal_content {
         width: 80%;
     }
-
+    .produto_card button {
+        background-color: var(--primary);
+        color: white;
+        padding: 15px 40px;
+        font-size: 2pc;
+        border-radius: 5px;
+        cursor: pointer;
+        border: none;
+    }
+    
     #userLogado {
         font-size: 1.5pc;
         max-width: 20;
