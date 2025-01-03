@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, message, Collapse } from 'antd';
+import { Button, message, Collapse, Modal } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../../Supabase/createClient.js'; // Importando o Supabase
+import { supabase } from '../../Supabase/createClient.js';
 import './Cliente.css';
 import { Link } from 'react-router-dom';
+import logo from './logo.png'
 
 const { Panel } = Collapse;
 
@@ -14,14 +15,14 @@ function Cliente() {
     const [selectedEmpresaId, setSelectedEmpresaId] = useState(null);
     const [selectedBonusCount, setSelectedBonusCount] = useState(0);
     const [selectedEmpresaImagem, setSelectedEmpresaImagem] = useState('');
-    const [maxBonus, setMaxBonus] = useState(0); // Para armazenar o máximo de bônus
+    const [isModalVisible, setIsModalVisible] = useState(false); // Controla a visibilidade do modal
     const navigate = useNavigate();
-    const bonusImageUrl = 'https://i.pinimg.com/564x/a6/1c/8d/a61c8dd18d112d20a3e959071077ab10.jpg';
+    const bonusImageUrl = 'https://jrbpwisclowinultbehj.supabase.co/storage/v1/object/public/ticket/ticket.png';
 
     useEffect(() => {
         const verificarCPF = async () => {
             const token = localStorage.getItem('token');
-            
+
             if (!token) {
                 message.error('Você não está logado.');
                 navigate('/login');
@@ -64,7 +65,7 @@ function Cliente() {
                     const empresaIds = empresasData.map(empresa => empresa.empresa_id);
                     const { data: empresasDetalhes, error: detalhesError } = await supabase
                         .from('empresas')
-                        .select('id, nome, imagem, max_bonus') // Incluindo o max_bonus
+                        .select('id, nome, imagem')
                         .in('id', empresaIds);
 
                     if (detalhesError) {
@@ -91,7 +92,6 @@ function Cliente() {
             setSelectedEmpresaId(null);
             setSelectedBonusCount(0);
             setSelectedEmpresaImagem('');
-            setMaxBonus(0); // Resetar maxBonus
         } else {
             setSelectedEmpresaId(empresaId);
 
@@ -111,9 +111,19 @@ function Cliente() {
             const selectedEmpresa = empresas.find(empresa => empresa.id === empresaId);
             if (selectedEmpresa) {
                 setSelectedEmpresaImagem(selectedEmpresa.imagem);
-                setMaxBonus(selectedEmpresa.max_bonus || 0); // Definindo o máximo de bônus
             }
+
+            setIsModalVisible(true); // Exibe o modal ao selecionar a empresa
         }
+    };
+
+    const handleModalClose = () => {
+        setIsModalVisible(false); // Fecha o modal
+    };
+
+    const handleResgatarBonus = () => {
+        message.success('Bônus resgatado com sucesso!');
+        setIsModalVisible(false); // Fecha o modal após o resgate
     };
 
     const getImageUrl = (genero) => {
@@ -127,7 +137,7 @@ function Cliente() {
     };
 
     return (
-        <div>           
+        <div>
             <br />
             <div className="user">
                 <div className="pessoa">
@@ -135,7 +145,6 @@ function Cliente() {
                         <img src={getImageUrl(clienteEncontrado.genero)} alt="Avatar do cliente" />
                     )}
                     <h1><span id='span'>{clienteEncontrado ? clienteEncontrado.nome : ''}!</span></h1>
-                  
                 </div>
                 <div className="botoes2">
                 <Button type="primary" id='red' onClick={handleLogout}>
@@ -154,7 +163,7 @@ function Cliente() {
             {clienteEncontrado ? (
                 <div className='container'>
                     <div>
-                        <h2 id='h2'>Seus Bônus!</h2>
+                        <h2 id='titulo'>Clique p/ ver seus Bônus!</h2>
                         <br />
                         <ul>
                             {empresas.map(empresa => (
@@ -170,49 +179,54 @@ function Cliente() {
                                         />
                                         {empresa.nome}
                                     </li>
-                                    <Button
-                                        type="primary"
-                                        onClick={() => {
-                                            localStorage.setItem('selectedEmpresa', JSON.stringify(empresa));
-                                            navigate('/produtos');
-                                        }}
-                                    >
-                                        Ir para Produtos
-                                            </Button>
+                                    {selectedEmpresaId === empresa.id && (
+                                        <Button
+                                            type="primary"
+                                            onClick={() => {
+                                                localStorage.setItem('selectedEmpresa', JSON.stringify(empresa));
+                                                navigate('/produtos');
+                                            }}
+                                        >
+                                            Resgate promo da {empresa.nome}
+                                        </Button>
+                                    )}
                                 </div>
                             ))}
                         </ul>
                     </div>
                     <div className='dir'>
-                        {selectedEmpresaId && (
+                        {/* {selectedEmpresaId && (
                             <div>
-                                <p><span id='span'>{selectedBonusCount}/{maxBonus}</span></p>
-                                <Collapse accordion>
-                                    <Panel header="Ver Tickets" key="1">
-                                        <div className='tickets'>
-                                            {Array(selectedBonusCount).fill(0).map((_, index) => (
-                                                <img 
-                                                    key={index} 
-                                                    src='https://jrbpwisclowinultbehj.supabase.co/storage/v1/object/public/ticket/ticket.png' 
-                                                    alt={`Bônus ${index + 1}`} 
-                                                    className="bonus-image_cliente" 
-                                                />
-                                            ))}
-                                        </div>
-                                    </Panel>
-                                </Collapse>
-                                {selectedBonusCount >= maxBonus && (
-                                    <div>
-                                        <p id='ganho'>🎉 Parabéns! Você ganhou o <span id='span'>Bônus!</span></p>
-                                    </div>
-                                )}
+                                <p id='bonusp'>Bônus: {selectedBonusCount}</p>
                             </div>
-                        )}
+                        )} */}
                     </div>
                 </div>
             ) : (
-                <p>Nenhum cliente encontrado.</p>
+                <p>Buscando informações...</p>
             )}
+
+            <Modal
+                title=""
+                visible={isModalVisible}
+                onCancel={handleModalClose}
+                footer={[
+                    // <Button key="back" onClick={handleModalClose}>
+                    //     Fechar
+                    // </Button>,
+                    // <Button key="submit" type="primary" onClick={handleResgatarBonus}>
+                    //     Resgatar Promoções
+                    // </Button>,
+                ]}
+            >
+                <div>
+                <h3 id='titulo'>Bônus disponível</h3>
+                    {/* <img src={bonusImageUrl} alt="Imagem do Bônus" width={100} /> */}
+                    <img id='logo' src={logo} alt="" srcset="" />
+                  
+                    <p>Você tem <span id='span2'>{selectedBonusCount}</span> bônus acumulados nesta empresa!</p>
+                </div>
+            </Modal>
         </div>
     );
 }

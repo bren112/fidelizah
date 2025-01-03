@@ -3,17 +3,17 @@ import { supabase } from "../../../Supabase/createClient.js";
 import { useNavigate } from 'react-router-dom';
 import { Input, Button, message, Modal } from 'antd';
 import InputMask from 'react-input-mask'; 
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts'; // Importando o gráfico de pizza
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'; // Alterando para o gráfico de barras
 import './Empresa.css';
 
 function Empresa() {
     const [empresa, setEmpresa] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [searchCPF, setSearchCPF] = useState(''); // Estado para o CPF de busca
-    const [clienteEncontrado, setClienteEncontrado] = useState(null); // Estado para armazenar o cliente encontrado
-    const [showClienteInfo, setShowClienteInfo] = useState(false); // Estado para controlar a visibilidade das informações do cliente
-    const [isModalVisible, setIsModalVisible] = useState(false); // Estado para controlar a visibilidade do modal de links
+    const [searchCPF, setSearchCPF] = useState('');
+    const [clienteEncontrado, setClienteEncontrado] = useState(null);
+    const [showClienteInfo, setShowClienteInfo] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -57,18 +57,18 @@ function Empresa() {
         const { data, error } = await supabase
             .from('clientes')
             .select('*')
-            .eq('cpf', searchCPF) // Filtrar pelo CPF
+            .eq('cpf', searchCPF)
             .eq('empresa_id', empresa.id);
 
         if (error) {
             message.error('Erro ao buscar cliente: ' + error.message);
         } else if (data.length === 0) {
             message.info('Nenhum cliente encontrado com esse CPF.');
-            setClienteEncontrado(null); // Limpa o cliente encontrado se não houver
-            setShowClienteInfo(false); // Oculta as informações do cliente
+            setClienteEncontrado(null);
+            setShowClienteInfo(false);
         } else {
-            setClienteEncontrado(data[0]); // Armazena o primeiro cliente encontrado
-            setShowClienteInfo(true); // Mostra as informações do cliente
+            setClienteEncontrado(data[0]);
+            setShowClienteInfo(true);
             message.success('Cliente encontrado com sucesso!');
         }
     };
@@ -84,17 +84,17 @@ function Empresa() {
     };
 
     const handleCloseClienteInfo = () => {
-        setShowClienteInfo(false); // Oculta as informações do cliente
-        setClienteEncontrado(null); // Limpa os dados do cliente
-        setSearchCPF(''); // Limpa o campo de busca
+        setShowClienteInfo(false);
+        setClienteEncontrado(null);
+        setSearchCPF('');
     };
 
     const handleOpenLinksModal = () => {
-        setIsModalVisible(true); // Abre o modal com os links
+        setIsModalVisible(true);
     };
 
     const handleCloseLinksModal = () => {
-        setIsModalVisible(false); // Fecha o modal
+        setIsModalVisible(false);
     };
 
     if (loading) {
@@ -105,28 +105,14 @@ function Empresa() {
         return <p>{error}</p>;
     }
 
-    // Cores atualizadas para o gráfico de pizza
-    const COLORS = ['#6c63ff', '#ff6584'];
-
-    // Prepara os dados para o gráfico
+    // Dados para o gráfico de barras
     const data = [
-        { name: 'Tickets atuais', value: clienteEncontrado?.bonus_count || 0 },
-        { name: 'Falta', value: Math.max((empresa?.max_bonus || 0) - (clienteEncontrado?.bonus_count || 0), 0) },
+        { name: 'Tickets', value: clienteEncontrado?.bonus_count || 0 },
     ];
-
-    // Função para lidar com o clique no botão de WhatsApp
-    const handleSendWhatsApp = () => {
-        const phone = clienteEncontrado.telefone;
-        const messageText = encodeURIComponent('Parabéns! Você atingiu todos os seus tickets e ganhou um presente!');
-        // Assegure-se de que o número está no formato internacional, sem espaços ou caracteres especiais
-        const formattedPhone = phone.replace(/\D/g, ''); // Remove tudo que não for dígito
-        const urlWhats = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${messageText}`;
-        window.open(urlWhats, '_blank');
-    };
 
     return (
         <div className="tudo">
-                      {empresa.imagem && (
+            {empresa.imagem && (
                 <div className="empresa-image-container">
                     <img 
                         id='-imgempresa'
@@ -137,12 +123,10 @@ function Empresa() {
                 </div>
             )}
             <div className="container_empresa">
-                
                 <h1 id='tile'>Olá <span id='span'>{empresa.nome}</span></h1>
                 <Button type="default" onClick={handleLogout} className="logout-button">Sair</Button>
-          
             </div>
-  
+
             <Button type="primary" onClick={handleOpenLinksModal} id='btnprincipal1' className="links-button">Minhas Ações</Button>
 
             <Modal
@@ -157,6 +141,7 @@ function Empresa() {
                     <li><Button type="link" onClick={() => navigate('/max')}>Criar Produto</Button></li>
                     <li><Button type="link" onClick={() => navigate('/gc')}>Relatório Bônus</Button></li>
                     <li><Button type="link" onClick={() => navigate('/relatorio')}>Relatório Produtos</Button></li>
+                    <li><Button type="link" onClick={() => navigate('/gprodutos')}>Gerenciar Produtos</Button></li>
                 </ul>
             </Modal>
 
@@ -189,47 +174,17 @@ function Empresa() {
                         </div>
                         <div className="dir">
                             <h3>Bônus do Cliente:</h3>
-                            <p>Tickets atuais: {clienteEncontrado.bonus_count || 0}</p>
-                            <p>Máximo de tickets: {empresa.max_bonus}</p>
-<br/>
-                            {/* Gráfico */}
-                            <h3><span id='span'>Total de Tickets:</span></h3>
+
+                            {/* Gráfico de barras */}
                             <ResponsiveContainer width="100%" height={300}>
-                                <PieChart>
-                                    <Pie
-                                        data={data}
-                                        dataKey="value"
-                                        nameKey="name"
-                                        cx="50%"
-                                        cy="50%"
-                                        outerRadius={100}
-                                        fill="#8884d8"
-                                        label
-                                    >
-                                        {data.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                        ))}
-                                    </Pie>
+                                <BarChart data={data}>
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
                                     <Tooltip />
                                     <Legend />
-                                </PieChart>
+                                    <Bar dataKey="value" fill="#6c63ff" />
+                                </BarChart>
                             </ResponsiveContainer>
-
-                           
-                            { (clienteEncontrado.bonus_count >= empresa.max_bonus) && (
-                                <Button 
-                                    type="primary" 
-                                    onClick={handleSendWhatsApp} 
-                                    className="whatsapp-button"
-                                    style={{ 
-                                        marginTop: '20px', 
-                                        backgroundColor: '#6c63ff', 
-                                        borderColor: '#6c63ff' 
-                                    }}
-                                >
-                                    Enviar Mensagem de Ganho!
-                                </Button>
-                            )}
 
                             <Button type="default" onClick={handleCloseClienteInfo} className="close-button">Fechar</Button>
                         </div>

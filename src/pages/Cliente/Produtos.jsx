@@ -145,63 +145,96 @@ function Produtos() {
 
     const handleResgatar = async () => {
         if (!selectedProduct) return;
-
+    
         const totalPrice = selectedProduct.preco * quantity;
-
+    
         if (bonusCount < totalPrice) {
             toast.error('Você não tem bônus suficientes para resgatar este produto.');
             handleCloseModal();
             return;
         }
-
+    
         try {
+            // Recuperando a empresa selecionada do localStorage
+            const selectedEmpresa = JSON.parse(localStorage.getItem('selectedEmpresa'));
+            
+            if (!selectedEmpresa) {
+                toast.error('Nenhuma empresa selecionada.');
+                return;
+            }
+    
+            const empresaId = selectedEmpresa.id;
+    
+            // Obtendo o número do WhatsApp da empresa
+            const { data: empresaData, error: empresaError } = await supabase
+                .from('empresas')
+                .select('whats')
+                .eq('id', empresaId)
+                .single();
+    
+            if (empresaError || !empresaData) {
+                console.error('Erro ao obter o WhatsApp da empresa:', empresaError?.message || 'Empresa não encontrada.');
+                toast.error('Erro ao obter informações da empresa. Tente novamente.');
+                handleCloseModal();
+                return;
+            }
+    
+            const whatsAppNumber = empresaData.whats;
+            const whatsAppLink = `https://wa.me/${whatsAppNumber}?text=Olá!%20Como%20Vai?%20Usando%20Fidelizah%20Eu gostaria%20de%20resgatar%20o%20produto:%20${encodeURIComponent(selectedProduct.nome)}%20com%20quantidade%20${quantity}.%20%20Valor:%20${totalPrice} bônus%20%20Aguardo%20mais%20informações.`;
+    
+            // Registrando o resgate
             const { data: userData, error: userError } = await supabase
                 .from('usuarios')
                 .select('id')
                 .eq('cpf', userCPF)
                 .single();
-
+    
             if (userError || !userData) {
                 console.error('Erro ao obter o ID do usuário:', userError?.message || 'Usuário não encontrado.');
                 toast.error('Erro ao obter informações do usuário. Tente novamente.');
                 handleCloseModal();
                 return;
             }
-
+    
             const userId = userData.id;
-
+    
             const { error: insertError } = await supabase
                 .from('produtos_resgatados')
                 .insert([{
                     produto_nome: selectedProduct.nome,
                     usuario_id: userId,
-                    empresa_id: empresaSelecionada.id,
+                    empresa_id: empresaId,
                     quantidade: quantity,
                     data: new Date().toISOString().split('T')[0],
                     hora: new Date().toISOString().split('T')[1].split('.')[0],
                 }]);
-
+    
             if (insertError) {
                 console.error('Erro ao registrar o resgate:', insertError.message);
                 toast.error('Erro ao registrar o resgate. Tente novamente.');
                 handleCloseModal();
                 return;
             }
-
+    
             const { error: updateError } = await supabase
                 .from('clientes')
                 .update({ bonus_count: bonusCount - totalPrice })
                 .eq('cpf', userCPF);
-
+    
             if (updateError) {
                 console.error('Erro ao atualizar número de bônus:', updateError.message);
                 toast.error('Erro ao atualizar o número de bônus. Tente novamente.');
                 handleCloseModal();
                 return;
             }
-
+    
             setBonusCount(bonusCount - totalPrice);
+    
             toast.success(`Produto ${selectedProduct.nome} resgatado com sucesso!`);
+    
+            // Redirecionando para o WhatsApp com o texto já preenchido
+            window.open(whatsAppLink, '_blank');
+    
         } catch (error) {
             console.error('Erro inesperado ao resgatar o produto:', error);
             toast.error('Erro ao resgatar o produto. Tente novamente.');
@@ -209,6 +242,7 @@ function Produtos() {
             handleCloseModal();
         }
     };
+    
 
     return (
         <>
@@ -247,7 +281,7 @@ function Produtos() {
 </svg>
 <p id='coin'>{produto.preco}</p>
 </div>
-                                <img src={produto.imagem} alt={produto.nome} className="produto_imagem" />
+                                <img src={produto.imagem_url} alt={produto.nome} className="produto_imagem" />
                                 <h3>{produto.nome}</h3>
              
                                 <button onClick={() => handleOpenModal(produto)}>Resgatar</button>
@@ -265,7 +299,7 @@ function Produtos() {
                     <button id='cancelar' onClick={handleCloseModal}>X</button>
                     <div className="centroModal">
                     <h3 id='nomeModal'>{selectedProduct.nome}</h3>
-                        <img src={selectedProduct.imagem} alt={selectedProduct.nome} className="produto_modal_imagem" />
+                        <img src={selectedProduct.imagem_url} alt={selectedProduct.nome} className="produto_modal_imagem" />
                         <p id='desc'>{selectedProduct.descricao}</p>
                         
                         {/* <p>Preço unitário: {selectedProduct.preco} bônus</p> */}

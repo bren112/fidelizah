@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Input, Button, Form, message } from 'antd';
-import InputMask from 'react-input-mask'; // Importe o InputMask
+import { Input, Button, Form, message, Select } from 'antd'; // Importe o Select
+import InputMask from 'react-input-mask';
 import { supabase } from "../../../Supabase/createClient.js";
 import { useNavigate } from 'react-router-dom';
 import './Criar.css';
+
+const { Option } = Select; // Destructure para usar Option
 
 function Criar() {
     const [empresa, setEmpresa] = useState(null);
@@ -43,7 +45,6 @@ function Criar() {
     const handleSubmit = async (values) => {
         const { nome, telefone, cpf, genero } = values;
 
-        // Verifica se o CPF já está cadastrado para a empresa atual
         const { data: existingClients, error: fetchError } = await supabase
             .from('clientes')
             .select('*')
@@ -55,13 +56,11 @@ function Criar() {
             return;
         }
 
-        // Se já existir um cliente com esse CPF na empresa atual, não permite o cadastro
         if (existingClients.length > 0) {
             message.error('Este CPF já está cadastrado para esta empresa.');
             return;
         }
 
-        // Insere o cliente no banco de dados
         const { data, error } = await supabase
             .from('clientes')
             .insert([{ nome, telefone, cpf, genero, empresa_id: empresa.id }]);
@@ -70,7 +69,7 @@ function Criar() {
             message.error('Erro ao criar cliente: ' + error.message);
         } else {
             message.success('Cliente criado com sucesso!');
-            form.resetFields(); // Zera todos os inputs após a criação
+            form.resetFields();
         }
     };
 
@@ -102,7 +101,7 @@ function Criar() {
                     name="telefone"
                     rules={[{ required: true, message: 'Por favor, insira o telefone' }]}>
                     <InputMask
-                        mask="(99) 99999-9999" // Máscara para o telefone
+                        mask="(99) 99999-9999"
                         className="input-field"
                         placeholder="Telefone"
                     />
@@ -111,16 +110,19 @@ function Criar() {
                     name="cpf"
                     rules={[{ required: true, message: 'Por favor, insira o CPF' }]}>
                     <InputMask
-                        mask="999.999.999-99" // Máscara para o CPF
+                        mask="999.999.999-99"
                         className="input-field"
                         placeholder="CPF"
                     />
                 </Form.Item>
                 <Form.Item
                     name="genero"
-                    initialValue="Outro"
                     rules={[{ required: true, message: 'Por favor, selecione o gênero' }]}>
-                    <Input className="input-field" placeholder="Gênero" />
+                    <Select className="input-field" placeholder="Selecione o gênero">
+                        <Option value="Masculino">Masculino</Option>
+                        <Option value="Feminino">Feminino</Option>
+                        <Option value="Outro">Outro</Option>
+                    </Select>
                 </Form.Item>
                 <Button type="primary" htmlType="submit" className="submit-button">Criar Cliente</Button>
             </Form>
