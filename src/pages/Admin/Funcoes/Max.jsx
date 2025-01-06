@@ -3,6 +3,53 @@ import { supabase } from "../../../Supabase/createClient.js";
 import { message, Button, Input } from "antd";
 import { useNavigate } from "react-router-dom";
 
+const styles = {
+  container: {
+    fontFamily: "'Poppins', sans-serif",
+    padding: "20px",
+    maxWidth: "600px",
+    margin: "0 auto",
+    backgroundColor: "#f9f9f9",
+    borderRadius: "8px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  },
+  title: {
+    fontFamily: "'MuseoModerno', cursive",
+    fontSize: "24px",
+    color: "#333",
+    textAlign: "center",
+    marginBottom: "20px",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
+  },
+  input: {
+    width: "100%",
+    padding: "10px",
+    fontSize: "16px",
+    borderRadius: "4px",
+    border: "1px solid #ccc",
+  },
+  submitButton: {
+    fontFamily: "'MuseoModerno', cursive",
+    backgroundColor: "var(--rosa)",
+    color: "#fff",
+    border: "none",
+    padding: "10px 20px",
+    cursor: "pointer",
+    borderRadius: "4px",
+    alignSelf: "center",
+  },
+  error: {
+    fontFamily: "'Poppins', sans-serif",
+    fontSize: "18px",
+    color: "red",
+    textAlign: "center",
+  },
+};
+
 function CadastroProduto() {
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -109,18 +156,20 @@ function CadastroProduto() {
   };
 
   return (
-    <div>
-      <h2>Cadastrar Produto</h2>
-      <form onSubmit={handleSubmit}>
+    <div style={styles.container}>
+      <h2 style={styles.title}>Cadastrar Produto</h2>
+      <form style={styles.form} onSubmit={handleSubmit}>
         <Input
           placeholder="Nome do produto"
           value={nome}
+          style={styles.input}
           onChange={(e) => setNome(e.target.value)}
           required
         />
         <Input
           placeholder="Descrição"
           value={descricao}
+          style={styles.input}
           onChange={(e) => setDescricao(e.target.value)}
           required
         />
@@ -128,81 +177,23 @@ function CadastroProduto() {
           type="number"
           placeholder="Preço"
           value={preco}
+          style={styles.input}
           onChange={(e) => setPreco(e.target.value)}
           required
         />
         <Input
           type="file"
+          style={styles.input}
           onChange={(e) => setImagem(e.target.files[0])}
           required
         />
-        <Button type="primary" htmlType="submit" loading={loading}>
+        <Button style={styles.submitButton} htmlType="submit" loading={loading}>
           Cadastrar
         </Button>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p style={styles.error}>{error}</p>}
       </form>
     </div>
   );
-}const styles = {
-  container: {
-    fontFamily: "'Poppins', sans-serif",
-    padding: "20px",
-    maxWidth: "600px",
-    margin: "0 auto",
-    backgroundColor: "#f9f9f9",
-    borderRadius: "8px",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-  },
-  backButton: {
-    fontFamily: "'MuseoModerno', cursive",
-    color: "#878787",
-    backgroundColor: "#f9f9f9",
-    border: "none",
-    padding: "10px 20px",
-    cursor: "pointer",
-    borderRadius: "4px",
-    marginBottom: "20px",
-  },
-  title: {
-    fontFamily: "'MuseoModerno', cursive",
-    fontSize: "24px",
-    color: "#333",
-    textAlign: "center",
-    marginBottom: "20px",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "15px",
-  },
-  label: {
-    fontSize: "16px",
-    color: "#333",
-    marginBottom: "5px",
-  },
-  input: {
-    width: "100%",
-    padding: "10px",
-    fontSize: "16px",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
-  },
-  submitButton: {
-    fontFamily: "'MuseoModerno', cursive",
-    backgroundColor: "var(--rosa)",
-    color: "#fff",
-    border: "none",
-    padding: "10px 20px",
-    cursor: "pointer",
-    borderRadius: "4px",
-    alignSelf: "center",
-  },
-  error: {
-    fontFamily: "'Poppins', sans-serif",
-    fontSize: "18px",
-    color: "red",
-    textAlign: "center",
-  },
-};
+}
 
 export default CadastroProduto;
