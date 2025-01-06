@@ -1,32 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { supabase } from "../../../Supabase/createClient.js";
+import { message, Button, Input } from "antd";
 import { useNavigate } from "react-router-dom";
 
-function CriarProduto() {
+function CadastroProduto() {
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [preco, setPreco] = useState("");
   const [imagem, setImagem] = useState(null);
+  const [empresa, setEmpresa] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchEmpresa = async () => {
+      const email = localStorage.getItem("token");
+      if (!email) {
+        message.error("Você não está logado.");
+        return;
+      }
+
+      const { data: empresaData, error: empresaError } = await supabase
+        .from("empresas")
+        .select("*")
+        .eq("email", email)
+        .single();
+
+      if (empresaError) {
+        message.error("Erro ao buscar a empresa: " + empresaError.message);
+        return;
+      }
+
+      setEmpresa(empresaData);
+    };
+
+    fetchEmpresa();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    // Pega o 'empresa_id' diretamente do localStorage
-    const empresaId = localStorage.getItem("empresa_id");
-
-    if (!empresaId) {
-      setError("Nenhuma empresa logada.");
+    if (!empresa) {
+      message.error("Nenhuma empresa logada.");
       setLoading(false);
       return;
     }
 
     if (!imagem) {
-      setError("Por favor, selecione uma imagem.");
+      message.error("Por favor, selecione uma imagem.");
       setLoading(false);
       return;
     }
@@ -34,183 +58,91 @@ function CriarProduto() {
     try {
       let publicUrl = "";
 
-      // Realiza o upload da imagem, se houver uma nova
-      if (imagem) {
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("produto_foto")
-          .upload(`produtos/${nome}.png`, imagem, {
-            cacheControl: "3600",
-            upsert: true,
-          });
+      // Realiza o upload da imagem
+      const uniqueName = `produtos/${Date.now()}_${nome}.png`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("produto_foto")
+        .upload(uniqueName, imagem, {
+          cacheControl: "3600",
+          upsert: true,
+        });
 
-        if (uploadError) {
-          throw uploadError;
-        }
-
-        // Obtém a URL pública da imagem após o upload
-        const { data } = supabase
-          .storage
-          .from("produto_foto")
-          .getPublicUrl(`produtos/${nome}.png`);
-        publicUrl = data.publicUrl;
+      if (uploadError) {
+        throw new Error("Erro ao fazer upload da imagem.");
       }
 
-      // Inserir o produto no banco de dados com a URL pública da imagem
-      const { data, error } = await supabase.from("produtos").insert([{
-        nome,
-        descricao,
-        preco: parseInt(preco, 10),
-        imagem_url: publicUrl, // Usa a URL pública da imagem
-        empresa_id: empresaId,  // Usa o 'empresa_id' diretamente do localStorage
-      }]);
+      // Obtém a URL pública da imagem
+      const { data: urlData } = supabase.storage.from("produto_foto").getPublicUrl(uniqueName);
+      if (urlData && urlData.publicUrl) {
+        publicUrl = urlData.publicUrl;
+      } else {
+        throw new Error("Erro ao obter a URL pública da imagem.");
+      }
+
+      // Inserir o produto no banco de dados com o ID da empresa logada
+      const { data, error } = await supabase.from("produtos").insert([
+        {
+          nome,
+          descricao,
+          preco: parseFloat(preco),
+          imagem_url: publicUrl,
+          empresa_id: empresa.id, // ID da empresa logada
+        },
+      ]);
 
       if (error) {
-        throw error;
+        throw new Error("Erro ao inserir o produto no banco de dados.");
       }
 
-      console.log("Produto inserido com sucesso:", data);
+      message.success("Produto cadastrado com sucesso!");
       setNome("");
       setDescricao("");
       setPreco("");
       setImagem(null);
-      fetchProdutos(); // Se você quiser atualizar a lista de produtos
       navigate("/adm");
     } catch (error) {
-      console.error("Erro ao inserir produto:", error.message);
+      console.error("Erro:", error.message);
       setError(error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFileChange = (e) => {
-    setImagem(e.target.files[0]);
-  };
-
-  const fetchProdutos = async () => {
-    try {
-      const { data, error } = await supabase.from("produtos").select("*");
-      if (error) {
-        throw error;
-      }
-      console.log("Produtos:", data);
-    } catch (error) {
-      console.error("Erro ao buscar produtos:", error.message);
-    }
-  };
-
   return (
-    <div style={styles.container}>
-      <button style={styles.backButton} onClick={() => navigate("/adm")}>
-        Voltar
-      </button>
-      <h1 style={styles.title}>Cadastrar Produto</h1>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <label style={styles.label}>Nome</label>
-        <input
-          style={styles.input}
-          type="text"
+    <div>
+      <h2>Cadastrar Produto</h2>
+      <form onSubmit={handleSubmit}>
+        <Input
+          placeholder="Nome do produto"
           value={nome}
           onChange={(e) => setNome(e.target.value)}
           required
         />
-
-        <label style={styles.label}>Descrição</label>
-        <textarea
-          style={styles.input}
+        <Input
+          placeholder="Descrição"
           value={descricao}
           onChange={(e) => setDescricao(e.target.value)}
           required
         />
-
-        <label style={styles.label}>Preço</label>
-        <input
-          style={styles.input}
+        <Input
           type="number"
+          placeholder="Preço"
           value={preco}
           onChange={(e) => setPreco(e.target.value)}
           required
         />
-
-        <label style={styles.label}>Imagem</label>
-        <input
-          style={styles.input}
+        <Input
           type="file"
-          accept="image/*"
-          onChange={handleFileChange}
+          onChange={(e) => setImagem(e.target.files[0])}
           required
         />
-
-        <button style={styles.submitButton} type="submit" disabled={loading}>
-          {loading ? "Cadastrando..." : "Cadastrar Produto"}
-        </button>
-
-        {error && <p style={styles.error}>{error}</p>}
+        <Button type="primary" htmlType="submit" loading={loading}>
+          Cadastrar
+        </Button>
+        {error && <p style={{ color: "red" }}>{error}</p>}
       </form>
     </div>
   );
 }
 
-const styles = {
-  container: {
-    fontFamily: "'Poppins', sans-serif",
-    padding: "20px",
-    maxWidth: "600px",
-    margin: "0 auto",
-    backgroundColor: "#f9f9f9",
-    borderRadius: "8px",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-  },
-  backButton: {
-    fontFamily: "'MuseoModerno', cursive",
-    color: "#878787",
-    backgroundColor: "#f9f9f9",
-    border: "none",
-    padding: "10px 20px",
-    cursor: "pointer",
-    borderRadius: "4px",
-    marginBottom: "20px",
-  },
-  title: {
-    fontFamily: "'MuseoModerno', cursive",
-    fontSize: "24px",
-    color: "#333",
-    textAlign: "center",
-    marginBottom: "20px",
-  },
-  form: {
-    display: "flex",
-    flexDirection: "column",
-    gap: "15px",
-  },
-  label: {
-    fontSize: "16px",
-    color: "#333",
-    marginBottom: "5px",
-  },
-  input: {
-    width: "100%",
-    padding: "10px",
-    fontSize: "16px",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
-  },
-  submitButton: {
-    fontFamily: "'MuseoModerno', cursive",
-    backgroundColor: "var(--rosa)",
-    color: "#fff",
-    border: "none",
-    padding: "10px 20px",
-    cursor: "pointer",
-    borderRadius: "4px",
-    alignSelf: "center",
-  },
-  error: {
-    fontFamily: "'Poppins', sans-serif",
-    fontSize: "18px",
-    color: "red",
-    textAlign: "center",
-  },
-};
-
-export default CriarProduto;
+export default CadastroProduto;
