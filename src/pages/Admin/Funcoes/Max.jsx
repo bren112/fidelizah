@@ -143,6 +143,66 @@ function CadastroProduto() {
       </form>
     </div>
   );
-}
+}const styles = {
+  container: {
+    fontFamily: "'Poppins', sans-serif",
+    padding: "20px",
+    maxWidth: "600px",
+    margin: "0 auto",
+    backgroundColor: "#f9f9f9",
+    borderRadius: "8px",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+  },
+  backButton: {
+    fontFamily: "'MuseoModerno', cursive",
+    color: "#878787",
+    backgroundColor: "#f9f9f9",
+    border: "none",
+    padding: "10px 20px",
+    cursor: "pointer",
+    borderRadius: "4px",
+    marginBottom: "20px",
+  },
+  title: {
+    fontFamily: "'MuseoModerno', cursive",
+    fontSize: "24px",
+    color: "#333",
+    textAlign: "center",
+    marginBottom: "20px",
+  },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    gap: "15px",
+  },
+  label: {
+    fontSize: "16px",
+    color: "#333",
+    marginBottom: "5px",
+  },
+  input: {
+    width: "100%",
+    padding: "10px",
+    fontSize: "16px",
+    borderRadius: "4px",
+    border: "1px solid #ccc",
+  },
+  submitButton: {
+    fontFamily: "'MuseoModerno', cursive",
+    backgroundColor: "var(--rosa)",
+    color: "#fff",
+    border: "none",
+    padding: "10px 20px",
+    cursor: "pointer",
+    borderRadius: "4px",
+    alignSelf: "center",
+  },
+  error: {
+    fontFamily: "'Poppins', sans-serif",
+    fontSize: "18px",
+    color: "red",
+    textAlign: "center",
+  },
+};
 
 export default CadastroProduto;
