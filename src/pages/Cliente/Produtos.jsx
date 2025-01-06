@@ -86,9 +86,9 @@ function Produtos() {
             const { data, error } = await supabase
                 .from('usuarios')
                 .select('nome, cpf')
-                .eq('email', token)
+                .eq('email', token) // Certifique-se de que 'email' seja o valor correto para a busca
                 .single();
-
+    
             if (error) {
                 console.error('Erro ao buscar dados do usuário:', error.message);
                 setError('Usuário não encontrado.');
@@ -101,6 +101,7 @@ function Produtos() {
             setError('Erro ao buscar usuário.');
         }
     };
+    
 
     const fetchBonusCount = async (cpf) => {
         try {
@@ -109,7 +110,7 @@ function Produtos() {
                 .select('bonus_count')
                 .eq('cpf', cpf)
                 .single();
-
+    
             if (error) {
                 console.error('Erro ao buscar número de bônus:', error.message);
                 setError('Erro ao buscar bônus.');
@@ -121,6 +122,7 @@ function Produtos() {
             setError('Erro ao buscar bônus.');
         }
     };
+    
 
     const handleOpenModal = (produto) => {
         setSelectedProduct(produto);

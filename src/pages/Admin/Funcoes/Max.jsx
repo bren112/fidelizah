@@ -16,9 +16,10 @@ function CriarProduto() {
     setLoading(true);
     setError(null);
 
-    const empresa = JSON.parse(localStorage.getItem("selectedEmpresa"));
+    // Pega o 'empresa_id' diretamente do localStorage
+    const empresaId = localStorage.getItem("empresa_id");
 
-    if (!empresa || !empresa.id) {
+    if (!empresaId) {
       setError("Nenhuma empresa logada.");
       setLoading(false);
       return;
@@ -55,15 +56,13 @@ function CriarProduto() {
       }
 
       // Inserir o produto no banco de dados com a URL pública da imagem
-      const { data, error } = await supabase.from("produtos").insert([
-        {
-          nome,
-          descricao,
-          preco: parseInt(preco, 10),
-          imagem_url: publicUrl, // Usa a URL pública da imagem
-          empresa_id: empresa.id,
-        },
-      ]);
+      const { data, error } = await supabase.from("produtos").insert([{
+        nome,
+        descricao,
+        preco: parseInt(preco, 10),
+        imagem_url: publicUrl, // Usa a URL pública da imagem
+        empresa_id: empresaId,  // Usa o 'empresa_id' diretamente do localStorage
+      }]);
 
       if (error) {
         throw error;

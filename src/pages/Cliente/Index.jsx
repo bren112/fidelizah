@@ -22,43 +22,43 @@ function Cliente() {
     useEffect(() => {
         const verificarCPF = async () => {
             const token = localStorage.getItem('token');
-
+        
             if (!token) {
                 message.error('Você não está logado.');
                 navigate('/login');
                 return;
             }
-
+        
             const { data: usuarioData, error: usuarioError } = await supabase
                 .from('usuarios')
                 .select('cpf')
                 .eq('email', token)
                 .single();
-
+        
             if (usuarioError) {
                 message.error('Erro ao buscar dados do usuário: ' + usuarioError.message);
                 return;
             }
-
+        
             const cpfUsuarioLogado = usuarioData.cpf;
-
+        
             const { data: clienteData, error: clienteError } = await supabase
                 .from('clientes')
                 .select('*')
                 .eq('cpf', cpfUsuarioLogado);
-
+        
             if (clienteError) {
                 message.error('Erro ao verificar CPF do cliente: ' + clienteError.message);
             } else if (clienteData.length > 0) {
                 const cliente = clienteData[0];
                 setClienteEncontrado(cliente);
                 message.success('Cliente encontrado!');
-
+        
                 const { data: empresasData, error: empresasError } = await supabase
                     .from('clientes')
                     .select('empresa_id')
                     .eq('cpf', cpfUsuarioLogado);
-
+        
                 if (empresasError) {
                     message.error('Erro ao buscar dados das empresas: ' + empresasError.message);
                 } else if (empresasData.length > 0) {
@@ -67,20 +67,39 @@ function Cliente() {
                         .from('empresas')
                         .select('id, nome, imagem')
                         .in('id', empresaIds);
-
+        
                     if (detalhesError) {
                         message.error('Erro ao buscar detalhes das empresas: ' + detalhesError.message);
                     } else {
                         setEmpresas(empresasDetalhes);
+        
+                        // Agora, buscamos o bônus de cada empresa
+                        empresasDetalhes.forEach(async (empresa) => {
+                            const { data: bonusData, error: bonusError } = await supabase
+                                .from('clientes')
+                                .select('bonus_count')
+                                .eq('empresa_id', empresa.id)
+                                .eq('cpf', cpfUsuarioLogado)
+                                .single();
+        
+                            if (bonusError) {
+                                console.error('Erro ao buscar bônus da empresa:', empresa.nome, bonusError.message);
+                            } else {
+                                console.log(`Empresa: ${empresa.nome}, Bônus: ${bonusData ? bonusData.bonus_count : 0}`);
+                            }
+                        });
                     }
                 }
             } else {
                 message.info('Nenhum cliente encontrado com esse CPF.');
             }
-        };
+      
+        
+    };
 
-        verificarCPF();
-    }, [navigate]);
+    verificarCPF();
+}, [navigate]);
+
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -206,27 +225,27 @@ function Cliente() {
                 <p>Buscando informações...</p>
             )}
 
-            <Modal
-                title=""
-                visible={isModalVisible}
-                onCancel={handleModalClose}
-                footer={[
-                    // <Button key="back" onClick={handleModalClose}>
-                    //     Fechar
-                    // </Button>,
-                    // <Button key="submit" type="primary" onClick={handleResgatarBonus}>
-                    //     Resgatar Promoções
-                    // </Button>,
-                ]}
-            >
-                <div>
-                <h3 id='titulo'>Bônus disponível</h3>
-                    {/* <img src={bonusImageUrl} alt="Imagem do Bônus" width={100} /> */}
-                    <img id='logo' src={logo} alt="" srcset="" />
-                  
-                    <p>Você tem <span id='span2'>{selectedBonusCount}</span> bônus acumulados nesta empresa!</p>
-                </div>
-            </Modal>
+<Modal
+    title=""
+    visible={isModalVisible}
+    onCancel={handleModalClose}
+    footer={[
+        <Button key="submit" type="primary" onClick={handleResgatarBonus}>
+            Resgatar Promoções
+        </Button>,
+    ]}
+>
+    <div>
+        <h3 id='titulo'>Bônus disponível</h3>
+        <img id='logo' src={logo} alt="Logo" />
+        {/* Exibe a imagem do bônus se necessário */}
+        {/* <img src={bonusImageUrl} alt="Imagem do Bônus" width={100} /> */}
+        
+        {/* Exibe o número de bônus acumulados */}
+        <p>Você tem <span id='span2'>{selectedBonusCount}</span> bônus acumulados nesta empresa!</p>
+    </div>
+</Modal>
+
         </div>
     );
 }

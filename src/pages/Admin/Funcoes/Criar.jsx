@@ -4,7 +4,7 @@ import InputMask from 'react-input-mask';
 import { supabase } from "../../../Supabase/createClient.js";
 import { useNavigate } from 'react-router-dom';
 import './Criar.css';
-
+import { Link } from 'react-router-dom';
 const { Option } = Select; // Destructure para usar Option
 
 function Criar() {
@@ -82,6 +82,12 @@ function Criar() {
     }
 
     return (
+        <>
+              <br/>
+            <Link to="/adm">
+                <Button id='voltar'>Voltar</Button>
+            </Link>
+          <br/>
         <div className="criar-container">
             <h1>Criar Cliente</h1>
             {empresa && (
@@ -126,7 +132,7 @@ function Criar() {
                 </Form.Item>
                 <Button type="primary" htmlType="submit" className="submit-button">Criar Cliente</Button>
             </Form>
-        </div>
+        </div></>
     );
 }
 

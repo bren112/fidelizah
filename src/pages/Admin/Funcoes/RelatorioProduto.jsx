@@ -35,10 +35,11 @@ function RelatorioProduto() {
 
         setEmpresaNome(empresaData.nome);
 
-        // Faz a consulta para obter os produtos resgatados, a data e a quantidade
+        // Faz a consulta para obter os produtos resgatados, a data e a quantidade da empresa logada
         const { data, error } = await supabase
           .from('produtos_resgatados')
-          .select('produto_nome, usuario_id, data, quantidade'); // Agora com a quantidade
+          .select('produto_nome, usuario_id, data, quantidade, empresa_id') // Incluindo o campo 'empresa_id'
+          .eq('empresa_id', empresaData.id); // Filtra pela empresa logada
 
         if (error) {
           throw error;
@@ -77,7 +78,7 @@ function RelatorioProduto() {
     };
 
     fetchRelatorio();
-  }, []);
+  }, []); // Carregar o relatório apenas uma vez quando o componente for montado
 
   // Função para filtrar os relatórios com base no nome do usuário
   const filtrarRelatorio = () => {
@@ -131,7 +132,7 @@ function RelatorioProduto() {
       
       {/* Campo de filtro para o nome do usuário */}
       <Input
-      id='minput'
+        id='minput'
         placeholder="Filtrar por nome do usuário"
         value={filtroUsuario}
         onChange={(e) => setFiltroUsuario(e.target.value)}
