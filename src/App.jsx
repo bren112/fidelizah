@@ -17,6 +17,7 @@ import Produtos from "./pages/Cliente/Produtos";
 import RelatorioProduto from "./pages/Admin/Funcoes/RelatorioProduto";
 import Historico from "./pages/Cliente/Historico";
 import Gprodutos from "./pages/Admin/Funcoes/Gprodutos";
+import RelatorioComp from "./pages/Admin/Funcoes/RelatorioComp";
 function App() {
   return (
     <BrowserRouter>
@@ -40,6 +41,7 @@ function App() {
             <Route path="/relatorio" element={<RelatorioProduto />} />
             <Route path="/historico" element={<Historico />} />
             <Route path="/gprodutos" element={<Gprodutos />} />
+            <Route path="/rp" element={<RelatorioComp />} />
 
          
           </Routes>
