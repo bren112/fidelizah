@@ -12,6 +12,15 @@ html {
 body {
   font-size: 1.6rem;
 }
+.nav-adm {
+  background-color: var(--primary_admin) !important; 
+  color: white;
+}
+
+.nav-adm .nav__link {
+  color: white;
+}
+
 
 #logo {
   color: var(--ter);

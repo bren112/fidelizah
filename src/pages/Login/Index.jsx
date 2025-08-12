@@ -65,7 +65,10 @@ function Login() {
             
             // Salvando o email do usuário no localStorage como token
             localStorage.setItem('token', usuarioLogado.email);
-            
+        
+            // Marcando cliente como logado
+            localStorage.setItem('clienteLogado', 'true');
+        
             // Redirecionando para a página /logado após o login
             navigate('/logado');
         }

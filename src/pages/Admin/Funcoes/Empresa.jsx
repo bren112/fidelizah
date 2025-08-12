@@ -45,9 +45,10 @@ function Empresa() {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        localStorage.setItem('admLogado', 'false'); // Marca que não está mais logado como ADM
         navigate('/adm');
     };
-
+    
     const handleSearch = async () => {
         if (!searchCPF) {
             message.error('Por favor, insira um CPF para buscar.');

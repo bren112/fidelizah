@@ -5,21 +5,20 @@ import { Link, useLocation } from 'react-router-dom';
 function Navbar() {
   const [active, setActive] = useState("nav__menu");
   const [toggleIcon, setToggleIcon] = useState("nav__toggler");
-  const location = useLocation(); // Hook para pegar a URL atual
+  const location = useLocation();
+
+  const isAdmLogado = localStorage.getItem('admLogado') === 'true';
+  const isClienteLogado = localStorage.getItem('clienteLogado') === 'true';
 
   const navToggle = () => {
-    active === 'nav__menu' ? setActive('nav__menu nav__active') : setActive('nav__menu');
-    toggleIcon === 'nav_toggler' ? 
-      setToggleIcon('nav__toggler toggle') 
-      : setToggleIcon("nav__toggler");
+    setActive(prev => prev === 'nav__menu' ? 'nav__menu nav__active' : 'nav__menu');
+    setToggleIcon(prev => prev === 'nav_toggler' ? 'nav__toggler toggle' : 'nav__toggler');
   };
 
-  // Verifica a rota atual para decidir o que mostrar
   const isLogado = location.pathname === '/logado';
   const isEmpresalogada = location.pathname === '/empresalogada';
-  const isProdutos = location.pathname === '/produtos'; // Verifica se está na página de produtos
+  const isProdutos = location.pathname === '/produtos';
 
-  // Condições para não exibir o link Login
   const isRestrictedPath = [
     '/bônus',
     '/criar',
@@ -29,25 +28,46 @@ function Navbar() {
   ].includes(location.pathname);
 
   return (
-    <nav className='nav'>
+    <nav className={`nav ${isAdmLogado ? 'nav-adm' : ''}`}>
       <div className="logo">
-        <Link to="/" className="nav__brand" id='logo'>Fidelizah</Link>
+        {isAdmLogado 
+          ? <Link to="/" className="nav__brand" id='logo'>Admin</Link>
+          : <Link to="/" className="nav__brand" id='logo'>Fidelizah</Link>
+        }
       </div>
-      <ul id='links' className={active}>
-        <li className="nav__item"><Link to="/" className="nav__link">Home</Link></li>
-        <li className="nav__item"><Link to="/sobre" className="nav__link">Como Funciona?</Link></li>
-        
-        {/* Condicionalmente renderiza o link de Login ou Adm */}
-        {!isLogado && !isEmpresalogada && !isRestrictedPath && (
-          <li className="nav__item"><Link to="/login" className="nav__link">Login</Link></li>
-        )}
-        
-        {/* Não exibe o link Adm se estiver em /empresalogada, /logado ou /produtos */}
-        {!isEmpresalogada && !isLogado && !isProdutos && (
-          <li className="nav__item"><Link to="/adm" className="nav__link">Adm</Link></li>
-        )}
 
-      </ul>
+     {/* Se for cliente logado */}
+{isClienteLogado ? (
+  <ul id='links' className={active}>
+    {location.pathname === '/sobre' ? (
+      <li className="nav__item">
+        <Link to="/login" className="nav__link">Voltar</Link>
+      </li>
+    ) : (
+      <li className="nav__item">
+        <Link to="/sobre" className="nav__link">Como Funciona?</Link>
+      </li>
+    )}
+  </ul>
+) : (
+  // Só mostra links se NÃO for ADM logado
+  !isAdmLogado && (
+    <ul id='links' className={active}>
+      <li className="nav__item"><Link to="/" className="nav__link">Home</Link></li>
+      <li className="nav__item"><Link to="/sobre" className="nav__link">Como Funciona?</Link></li>
+
+      {!isLogado && !isEmpresalogada && !isRestrictedPath && (
+        <li className="nav__item"><Link to="/login" className="nav__link">Login</Link></li>
+      )}
+
+      {!isEmpresalogada && !isLogado && !isProdutos && (
+        <li className="nav__item"><Link to="/adm" className="nav__link">Adm</Link></li>
+      )}
+    </ul>
+  )
+)}
+
+
       <div onClick={navToggle} className={toggleIcon}>
         <div className="line1"></div>
         <div className="line2"></div>

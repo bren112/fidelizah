@@ -1,10 +1,13 @@
-import './footer.css'
+import './footer.css';
 
-function footer(){
-    return(
-        <div className="footer">
+function Footer() {
+    const isAdmLogado = localStorage.getItem('admLogado') === 'true';
 
+    return (
+        <div className={`footer ${isAdmLogado ? 'footer-adm' : ''}`}>
+            {/* conteúdo do footer */}
         </div>
-    )
+    );
 }
-export default footer;
+
+export default Footer;

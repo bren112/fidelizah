@@ -20,22 +20,29 @@ function LoginCadastroEmpresa() {
 
     const handleLogin = async (values) => {
         const { email, senha } = values;
-
+    
         const { data, error } = await supabase
             .from('empresas')
             .select('*')
             .eq('email', email)
             .eq('senha', senha)
             .single();
-
+    
         if (error || !data) {
             message.error('Erro ao fazer login: ' + (error ? error.message : 'Dados inválidos.'));
         } else {
             message.success('Login realizado com sucesso!');
-            localStorage.setItem('token', data.email); // Salva o email da empresa no localStorage
-            navigate('/empresalogada'); // Redireciona para /empresalogada
+            
+            // Salva o email como token
+            localStorage.setItem('token', data.email);
+    
+            // Salva flag de administrador logado
+            localStorage.setItem('admLogado', 'true');
+    
+            navigate('/empresalogada');
         }
     };
+    
 
     const handleSubmit = async (values) => {
         const { nome, descricao, imagem, email, senha, whats } = values;
