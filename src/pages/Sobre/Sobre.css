@@ -1,19 +1,124 @@
-#title{
+.containerSobre {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6pc;
+    height: 100vh;
+    padding: 2pc;
+    animation: fadeIn 0.8s ease-in-out;
+    flex-wrap: wrap; /* Evita quebra feia em telas menores */
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  
+  #title {
     font-weight: 600;
-}
-#title_h1{
-    font-size: 1.9pc;
-    font-weight: 600;
-}
-#img{
-    width: 35pc;
-}
-.txt{
+  }
+  
+  #title_h1 {
+    font-size: clamp(1.4rem, 2.2vw, 2.2pc);
+    font-weight: 700;
+    color: var(--rosa);
+    margin-bottom: 10px;
+  }
+  
+  #img {
+    width: 100%;
+    max-width: 32pc;
+  }
+  
+  .txt {
     max-width: 34pc;
     text-align: justify;
-}
-@media (max-width: 768px) {
-#img{
-    width: 23pc;
-}
-}
+    background: rgba(255, 255, 255, 0.75);
+    padding: 1.5pc;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    backdrop-filter: blur(6px);
+  }
+  
+  .esq img {
+    width: 100%;
+    max-width: 430px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  
+  .esq img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  }
+  
+  .dir {
+    max-width: 500px;
+  }
+  
+  .navegacao {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+  
+  .navegacao button {
+    padding: 10px 18px;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, var(--rosa), #ff7aa0);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+  }
+  
+  .navegacao button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  }
+  
+  .navegacao button:active {
+    transform: translateY(1px);
+  }
+  
+  /* Tablets */
+  @media (max-width: 1024px) {
+    .containerSobre {
+      gap: 3pc;
+      padding: 1.5pc;
+    }
+  
+    .esq img {
+      max-width: 350px;
+    }
+  }
+  
+  /* Celulares */
+  @media (max-width: 768px) {
+    .containerSobre {
+      flex-direction: column;
+      gap: 2pc;
+      text-align: center;
+      height: auto;
+      padding-top: 2pc;
+      padding-bottom: 2pc;
+    }
+  
+    .esq img {
+      max-width: 280px;
+    }
+  
+    #img {
+      width: 80%;
+      max-width: 280px;
+    }
+  
+    .txt {
+      padding: 1pc;
+    }
+  }
+  
