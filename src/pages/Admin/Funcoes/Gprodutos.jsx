@@ -3,7 +3,7 @@ import { Table, Button, message, Modal, Input, Form } from 'antd';
 import { supabase } from '../../../Supabase/createClient';
 // import './Gprodutos.css';
 import { Link } from 'react-router-dom';
-
+import '.././Adm.css';
 function Gprodutos() {
   const [produtos, setProdutos] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -112,6 +112,21 @@ function Gprodutos() {
 
   const columns = [
     {
+      title: 'Imagem',
+      dataIndex: 'imagem_url',
+      key: 'imagem_url',
+      render: (url) =>
+        url ? (
+          <img
+            src={url}
+            alt="Produto"
+            style={{ width: '60px', height: '60px', objectFit: 'cover', borderRadius: '8px' }}
+          />
+        ) : (
+          'Sem imagem'
+        ),
+    },
+    {
       title: 'Nome do Produto',
       dataIndex: 'nome',
       key: 'nome',
@@ -125,7 +140,7 @@ function Gprodutos() {
       title: 'Preço',
       dataIndex: 'preco',
       key: 'preco',
-      render: (text) => `R$ ${text.toFixed(2)}`,
+      render: (text) => `R$ ${Number(text).toFixed(2)}`,
     },
     {
       title: 'Ações',
@@ -142,6 +157,7 @@ function Gprodutos() {
       ),
     },
   ];
+  
 
   return (
     <>
@@ -152,15 +168,15 @@ function Gprodutos() {
     <br/>
       <h2 id='title_gerenciar'>Gerenciar Produtos</h2>
     <br/>
-
+<div className="margin">
       <Table
         dataSource={produtos}
         columns={columns}
         rowKey="id"
         loading={loading}
-        pagination={{ pageSize: 5 }}
+        pagination={{ pageSize: 9}}
       />
-
+</div>
       <Modal
         title="Editar Produto"
         open={isModalOpen}

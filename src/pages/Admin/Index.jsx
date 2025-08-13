@@ -63,7 +63,7 @@ function LoginCadastroEmpresa() {
     return (
         <div className="container">
             <div className='esq'>
-                <h1 id='title_adm'>Bonifique com Fidelizah!</h1>
+                <h1 id='title_adm'>Bonifique seus Clientes!</h1>
                 <br />
                 <img src={img} id='imgHome' alt="" srcset="" />
             </div>

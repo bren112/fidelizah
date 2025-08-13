@@ -4,6 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { Input, Button, message, Modal, Select, AutoComplete } from 'antd';
 import InputMask from 'react-input-mask'; 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import {
+    GiftOutlined,
+    UserAddOutlined,
+    AppstoreAddOutlined,
+    FileSearchOutlined,
+    ShoppingOutlined,
+    SettingOutlined
+} from '@ant-design/icons';
+
 import './Empresa.css';
 const { Option } = Select;
 
@@ -153,20 +162,71 @@ function Empresa() {
             <Button type="primary" onClick={handleOpenLinksModal} id='btnprincipal1' className="links-button">Minhas Ações</Button>
 
             <Modal
-                title="Escolha sua Ação:"
-                visible={isModalVisible}
-                onCancel={handleCloseLinksModal}
-                footer={null}
-            >
-                <ul>
-                    <li><Button type="link" onClick={() => navigate('/bonus')}>Bonificar</Button></li>
-                    <li><Button type="link" onClick={() => navigate('/criar')}>Criar Cliente</Button></li>
-                    <li><Button type="link" onClick={() => navigate('/max')}>Criar Produto</Button></li>
-                    <li><Button type="link" onClick={() => navigate('/gc')}>Relatório Bônus</Button></li>
-                    <li><Button type="link" onClick={() => navigate('/relatorio')}>Relatório Produtos</Button></li>
-                    <li><Button type="link" onClick={() => navigate('/gprodutos')}>Gerenciar Produtos</Button></li>
-                </ul>
-            </Modal>
+                    title="📌 Escolha sua Ação"
+                    open={isModalVisible} // no AntD 5 o prop é 'open', se for AntD 4 mantenha 'visible'
+                    onCancel={handleCloseLinksModal}
+                    footer={null}
+                    centered
+                    bodyStyle={{ padding: 20 }}
+                >
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+
+                <Button
+                    type="primary"
+                    icon={<GiftOutlined />}
+                    block
+                    onClick={() => navigate('/bonus')}
+                >
+                    Bonificar
+                </Button>
+
+                <Button
+                    type="default"
+                    icon={<UserAddOutlined />}
+                    block
+                    onClick={() => navigate('/criar')}
+                >
+                    Criar Cliente
+                </Button>
+
+                <Button
+                    type="default"
+                    icon={<AppstoreAddOutlined />}
+                    block
+                    onClick={() => navigate('/max')}
+                >
+                    Criar Produto
+                </Button>
+
+                <Button
+                    type="dashed"
+                    icon={<FileSearchOutlined />}
+                    block
+                    onClick={() => navigate('/gc')}
+                >
+                    Relatório Bônus
+                </Button>
+
+                <Button
+                    type="dashed"
+                    icon={<ShoppingOutlined />}
+                    block
+                    onClick={() => navigate('/relatorio')}
+                >
+                    Relatório Produtos
+                </Button>
+
+                <Button
+                    type="text"
+                    icon={<SettingOutlined />}
+                    block
+                    onClick={() => navigate('/gprodutos')}
+                >
+                    Gerenciar Produtos
+                </Button>
+                
+            </div>
+        </Modal>
 
             <div className="search-area">
                 <h2>Buscar Cliente</h2>

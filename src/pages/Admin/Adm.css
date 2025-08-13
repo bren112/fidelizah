@@ -17,7 +17,9 @@
 .sidebar ul li {
     margin: 10px 0;
 }
-
+.margin {
+    margin: 20px;
+}
 .sidebar ul li a {
     text-decoration: none;
     color: var(--primary);
