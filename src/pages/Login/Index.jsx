@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Modal, Form, message } from 'antd';
+import { Modal, Form, Input, Button, Select, message } from 'antd';
 import InputMask from 'react-input-mask';
-import { useNavigate } from 'react-router-dom'; // Importando o useNavigate
+import { useNavigate } from 'react-router-dom';
 import img from './imgLogin.png';
 import './Login.css';
 import { supabase } from "../../Supabase/createClient.js";
+
 
 function Login() {
     const [showModal, setShowModal] = useState(false);
@@ -82,92 +83,105 @@ function Login() {
             <div className="dir">
                 <h1 id="title">Faça seu Login!</h1>
                 <br />
-                <Form onFinish={handleLogin}>
-                    <Form.Item 
-                        name="email" 
-                        rules={[{ required: true, message: 'Por favor, insira seu email' }]}
-                    >
-                        <Input placeholder="Email" className="ant-input" />
-                    </Form.Item>
-                    <Form.Item 
-                        name="password" 
-                        rules={[{ required: true, message: 'Por favor, insira sua senha' }]}
-                    >
-                        <Input.Password placeholder="Senha" className="ant-input" />
-                    </Form.Item>
-                    <div className="acoes">
-                        <Button type="primary" id="buttonLogin" htmlType="submit">Login</Button>
-                        <a id="semconta" href="#" onClick={toggleModal}>Cadastrar</a>
-                    </div>
-                </Form>
+                <Form onFinish={handleLogin} layout="vertical">
+            <Form.Item
+                name="email"
+                label="Email"
+                rules={[{ required: true, message: 'Por favor, insira seu email' }]}
+            >
+                <Input placeholder="Email" />
+            </Form.Item>
+
+            <Form.Item
+                name="password"
+                label="Senha"
+                rules={[{ required: true, message: 'Por favor, insira sua senha' }]}
+            >
+                <Input.Password placeholder="Senha" />
+            </Form.Item>
+
+            <div className="acoes" style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <Button type="primary" id="buttonLogin" htmlType="submit">Login</Button>
+                <a id="semconta" href="#" onClick={toggleModal}>Cadastrar</a>
+            </div>
+        </Form>
+
             </div>
 
             {/* Modal para cadastro de usuário */}
             <Modal
-                title="Cadastre-se"
-                visible={showModal}
-                onCancel={toggleModal}
-                footer={null}
-                centered
+    title="Cadastre-se"
+    open={showModal} // AntD v5 usa "open" no lugar de "visible"
+    onCancel={toggleModal}
+    footer={null}
+    centered
+>
+    <div className="modal-content">
+        <Form form={form} onFinish={handleSubmit} layout="vertical">
+            <Form.Item
+                name="nome"
+                label="Nome Completo"
+                rules={[{ required: true, message: 'Por favor, insira seu nome' }]}
             >
-                <div className="modal-content">
-                    <Form form={form} onFinish={handleSubmit}>
-                        <Form.Item 
-                            name="nome" 
-                            rules={[{ required: true, message: 'Por favor, insira seu nome' }]}
-                        >
-                            <Input placeholder="Nome Completo" className="ant-input" />
-                        </Form.Item>
-                        <Form.Item 
-                            name="telefone" 
-                            rules={[{ required: true, message: 'Por favor, insira seu telefone' }]}
-                        >
-                            <InputMask
-                                mask="(99) 99999-9999"
-                                className="ant-input"
-                                placeholder="Número de Telefone"
-                            />
-                        </Form.Item>
-                        <Form.Item 
-                            name="cpf" 
-                            rules={[{ required: true, message: 'Por favor, insira seu CPF' }]}
-                        >
-                            <InputMask
-                                mask="999.999.999-99"
-                                className="ant-input"
-                                placeholder="CPF"
-                            />
-                        </Form.Item>
-                        <Form.Item 
-                            name="email" 
-                            rules={[{ required: true, message: 'Por favor, insira seu email' }]}
-                        >
-                            <Input placeholder="Email" className="ant-input" />
-                        </Form.Item>
-                        <Form.Item 
-                            name="password" 
-                            rules={[{ required: true, message: 'Por favor, insira sua senha' }]}
-                        >
-                            <Input.Password placeholder="Senha" className="ant-input" />
-                        </Form.Item>
-                        <Form.Item 
-                            name="genero" 
-                            rules={[{ required: true, message: 'Por favor, selecione seu gênero' }]}
-                        >
-                            <select className="ant-input">
-                                <option value="">Selecione</option>
-                                <option value="homem">Homem</option>
-                                <option value="mulher">Mulher</option>
-                                <option value="nenhum dos dois">Nenhum dos dois</option>
-                            </select>
-                        </Form.Item>
-                        <div className="acoes">
-                            <Button type="primary" htmlType="submit">Cadastrar</Button>
-                            <Button type="default" onClick={toggleModal}>Fechar</Button>
-                        </div>
-                    </Form>
-                </div>
-            </Modal>
+                <Input placeholder="Nome Completo" />
+            </Form.Item>
+
+            <Form.Item
+                name="telefone"
+                label="Telefone"
+                rules={[{ required: true, message: 'Por favor, insira seu telefone' }]}
+            >
+                <InputMask mask="(99) 99999-9999">
+                    {(inputProps) => <Input {...inputProps} placeholder="Número de Telefone" />}
+                </InputMask>
+            </Form.Item>
+
+            <Form.Item
+                name="cpf"
+                label="CPF"
+                rules={[{ required: true, message: 'Por favor, insira seu CPF' }]}
+            >
+                <InputMask mask="999.999.999-99">
+                    {(inputProps) => <Input {...inputProps} placeholder="CPF" />}
+                </InputMask>
+            </Form.Item>
+
+            <Form.Item
+                name="email"
+                label="Email"
+                rules={[{ required: true, message: 'Por favor, insira seu email' }]}
+            >
+                <Input placeholder="Email" type="email" />
+            </Form.Item>
+
+            <Form.Item
+                name="password"
+                label="Senha"
+                rules={[{ required: true, message: 'Por favor, insira sua senha' }]}
+            >
+                <Input.Password placeholder="Senha" />
+            </Form.Item>
+
+            <Form.Item
+                name="genero"
+                label="Gênero"
+                rules={[{ required: true, message: 'Por favor, selecione seu gênero' }]}
+            >
+                <Select placeholder="Selecione">
+                    <Select.Option value="homem">Homem</Select.Option>
+                    <Select.Option value="mulher">Mulher</Select.Option>
+                    <Select.Option value="nenhum dos dois">Nenhum dos dois</Select.Option>
+                </Select>
+            </Form.Item>
+
+            <div className="acoes" style={{ display: 'flex', gap: '8px' }}>
+                <Button type="primary" htmlType="submit">Cadastrar</Button>
+                <Button onClick={toggleModal}>Fechar</Button>
+            </div>
+        </Form>
+    </div>
+</Modal>
+
         </div>
     );
 }

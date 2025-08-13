@@ -1,3 +1,4 @@
+// CRIAR PRODUTO COM UPLOAD
 import React, { useState, useEffect } from "react";
 import { supabase } from "../../../Supabase/createClient.js";
 import { message, Button, Input } from "antd";
@@ -54,7 +55,7 @@ function CadastroProduto() {
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [preco, setPreco] = useState("");
-  const [imagemUrl, setImagemUrl] = useState("");
+  const [imagem, setImagem] = useState(null);
   const [empresa, setEmpresa] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -96,30 +97,56 @@ function CadastroProduto() {
       return;
     }
 
-    if (!imagemUrl) {
-      message.error("Por favor, insira a URL da imagem.");
+    if (!imagem) {
+      message.error("Por favor, selecione uma imagem.");
       setLoading(false);
       return;
     }
 
     try {
+      let publicUrl = "";
+
+      // Realiza o upload da imagem
+      const uniqueName = `produtos/${Date.now()}_${nome}.png`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("produto_foto")
+        .upload(uniqueName, imagem, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+
+      if (uploadError) {
+        throw new Error("Erro ao fazer upload da imagem.");
+      }
+
+      // Obtém a URL pública da imagem
+      const { data: urlData } = supabase.storage.from("produto_foto").getPublicUrl(uniqueName);
+      if (urlData && urlData.publicUrl) {
+        publicUrl = urlData.publicUrl;
+      } else {
+        throw new Error("Erro ao obter a URL pública da imagem.");
+      }
+
+      // Inserir o produto no banco de dados com o ID da empresa logada
       const { data, error } = await supabase.from("produtos").insert([
         {
           nome,
           descricao,
           preco: parseFloat(preco),
-          imagem_url: imagemUrl,
-          empresa_id: empresa.id,
+          imagem_url: publicUrl,
+          empresa_id: empresa.id, // ID da empresa logada
         },
       ]);
 
-      if (error) throw error;
+      if (error) {
+        throw new Error("Erro ao inserir o produto no banco de dados.");
+      }
 
       message.success("Produto cadastrado com sucesso!");
       setNome("");
       setDescricao("");
       setPreco("");
-      setImagemUrl("");
+      setImagem(null);
       navigate("/adm");
     } catch (error) {
       console.error("Erro:", error.message);
@@ -156,10 +183,9 @@ function CadastroProduto() {
           required
         />
         <Input
-          placeholder="URL da Imagem"
-          value={imagemUrl}
+          type="file"
           style={styles.input}
-          onChange={(e) => setImagemUrl(e.target.value)}
+          onChange={(e) => setImagem(e.target.files[0])}
           required
         />
         <Button style={styles.submitButton} htmlType="submit" loading={loading}>

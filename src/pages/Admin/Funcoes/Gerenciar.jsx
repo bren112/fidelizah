@@ -81,6 +81,12 @@ function Gerenciar() {
         { title: 'Nome do Cliente', dataIndex: 'cliente_nome', key: 'cliente_nome' },
         { title: 'Funcionário que Deu o Bônus', dataIndex: 'funcionario_nome', key: 'funcionario_nome' },
         { title: 'Bônus Dado', dataIndex: 'bonus_dado', key: 'bonus_dado' },
+        { 
+            title: 'Descrição', 
+            dataIndex: 'desccompra', 
+            key: 'desccompra',
+            render: (text) => text || '-' // Mostra '-' se estiver vazio
+        },
         {
             title: 'Data e Hora',
             dataIndex: 'data_hora',
@@ -89,7 +95,7 @@ function Gerenciar() {
                 text ? format(new Date(text), 'dd/MM/yyyy HH:mm', { locale: ptBR }) : null
         }
     ];
-
+    
     return (
         <>
             <br />

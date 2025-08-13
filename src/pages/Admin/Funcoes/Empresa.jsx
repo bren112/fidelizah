@@ -10,7 +10,8 @@ import {
     AppstoreAddOutlined,
     FileSearchOutlined,
     ShoppingOutlined,
-    SettingOutlined
+    SettingOutlined,
+    FileTextOutlined
 } from '@ant-design/icons';
 
 import './Empresa.css';
@@ -175,9 +176,18 @@ function Empresa() {
                     type="primary"
                     icon={<GiftOutlined />}
                     block
+                    onClick={() => navigate('/gerenciamento')}
+                >
+                    Sistema de Bônus
+                </Button>
+
+                <Button
+                    type="default"
+                    icon={<FileTextOutlined />}
+                    block
                     onClick={() => navigate('/bonus')}
                 >
-                    Bonificar
+                    Bônus Básico
                 </Button>
 
                 <Button

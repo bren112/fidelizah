@@ -18,6 +18,7 @@ import RelatorioProduto from "./pages/Admin/Funcoes/RelatorioProduto";
 import Historico from "./pages/Cliente/Historico";
 import Gprodutos from "./pages/Admin/Funcoes/Gprodutos";
 import RelatorioComp from "./pages/Admin/Funcoes/RelatorioComp";
+import Gerenciamento from "./pages/Admin/Venda/Gerenciamento";
 function App() {
   return (
     <BrowserRouter>
@@ -42,6 +43,7 @@ function App() {
             <Route path="/historico" element={<Historico />} />
             <Route path="/gprodutos" element={<Gprodutos />} />
             <Route path="/rp" element={<RelatorioComp />} />
+            <Route path="/gerenciamento" element={<Gerenciamento />} />
 
          
           </Routes>
