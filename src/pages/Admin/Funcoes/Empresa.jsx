@@ -1,21 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from "../../../Supabase/createClient.js";
 import { useNavigate } from 'react-router-dom';
-import { Input, Button, message, Modal } from 'antd';
+import { Input, Button, message, Modal, Select, AutoComplete } from 'antd';
 import InputMask from 'react-input-mask'; 
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'; // Alterando para o gráfico de barras
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import './Empresa.css';
+const { Option } = Select;
 
 function Empresa() {
+    const [searchNome, setSearchNome] = useState('');
     const [empresa, setEmpresa] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchCPF, setSearchCPF] = useState('');
+    const [searchBy, setSearchBy] = useState('cpf'); // ← Adicionado!
     const [clienteEncontrado, setClienteEncontrado] = useState(null);
     const [showClienteInfo, setShowClienteInfo] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const navigate = useNavigate();
+    const [options, setOptions] = useState([]); // Para armazenar sugestões de nomes
 
+    const handleSearchChange = async (value) => {
+        setSearchCPF(value); // Atualiza o input
+    
+        if (searchBy === 'nome' && value) {
+            // Busca parcial no Supabase conforme o usuário digita
+            const { data, error } = await supabase
+                .from('clientes')
+                .select('nome')
+                .ilike('nome', `%${value}%`)
+                .eq('empresa_id', empresa.id)
+                .limit(5); // limita as sugestões
+    
+            if (!error) {
+                setOptions(data.map(cliente => ({ value: cliente.nome })));
+            }
+        }
+    };
     useEffect(() => {
         const fetchEmpresa = async () => {
             const email = localStorage.getItem('token');
@@ -45,26 +66,33 @@ function Empresa() {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
-        localStorage.setItem('admLogado', 'false'); // Marca que não está mais logado como ADM
+        localStorage.setItem('admLogado', 'false');
         navigate('/adm');
     };
     
     const handleSearch = async () => {
         if (!searchCPF) {
-            message.error('Por favor, insira um CPF para buscar.');
+            message.error(`Por favor, insira um ${searchBy === 'cpf' ? 'CPF' : 'nome'} para buscar.`);
             return;
         }
-
-        const { data, error } = await supabase
+    
+        let query = supabase
             .from('clientes')
             .select('*')
-            .eq('cpf', searchCPF)
             .eq('empresa_id', empresa.id);
-
+    
+        if (searchBy === 'cpf') {
+            query = query.eq('cpf', searchCPF);
+        } else {
+            query = query.ilike('nome', `%${searchCPF}%`);
+        }
+    
+        const { data, error } = await query;
+    
         if (error) {
             message.error('Erro ao buscar cliente: ' + error.message);
         } else if (data.length === 0) {
-            message.info('Nenhum cliente encontrado com esse CPF.');
+            message.info(`Nenhum cliente encontrado com esse ${searchBy === 'cpf' ? 'CPF' : 'nome'}.`);
             setClienteEncontrado(null);
             setShowClienteInfo(false);
         } else {
@@ -98,15 +126,9 @@ function Empresa() {
         setIsModalVisible(false);
     };
 
-    if (loading) {
-        return <p>Carregando...</p>;
-    }
+    if (loading) return <p>Carregando...</p>;
+    if (error) return <p>{error}</p>;
 
-    if (error) {
-        return <p>{error}</p>;
-    }
-
-    // Dados para o gráfico de barras
     const data = [
         { name: 'Tickets', value: clienteEncontrado?.bonus_count || 0 },
     ];
@@ -147,15 +169,52 @@ function Empresa() {
             </Modal>
 
             <div className="search-area">
-                <h2>Buscar Cliente pelo CPF</h2>
-                <InputMask
-                    mask="999.999.999-99"
-                    value={searchCPF}
-                    onChange={(e) => setSearchCPF(e.target.value)}
-                    placeholder="Digite o CPF"
-                    className="input-cpf"
-                />
-                <Button type="primary" onClick={handleSearch} id='btnprincipal2' className="search-button">Buscar</Button>
+                <h2>Buscar Cliente</h2>
+<div className="searchTipo">
+                <Select 
+                    value={searchBy} 
+                    onChange={setSearchBy} 
+                    style={{ width: 120, marginRight: 10 }}
+                >
+                    <Option value="cpf">CPF</Option>
+                    <Option value="nome">Nome</Option>
+                </Select>
+               <br />
+        
+               {searchBy === 'cpf' ? (
+    <InputMask
+        mask="999.999.999-99"
+        value={searchCPF}
+        onChange={(e) => setSearchCPF(e.target.value)}
+        placeholder="Digite o CPF"
+        className="input-cpf"
+    />
+) : searchBy === 'nome' ? (
+    <AutoComplete
+        options={options}
+        onChange={handleSearchChange}
+        filterOption={false}
+        className="input-nome"
+    >
+        <Input
+            value={searchNome}
+            onChange={(e) => setSearchNome(e.target.value)}
+            placeholder="Digite o nome"
+            className="input_nome"
+        />
+    </AutoComplete>
+) : null}
+
+<br /></div>
+
+                <Button 
+                    type="primary" 
+                    onClick={handleSearch} 
+                    id='btnprincipal2' 
+                    className="search-button"
+                >
+                    Buscar
+                </Button>
             </div>
 
             {showClienteInfo && clienteEncontrado && (
@@ -176,7 +235,6 @@ function Empresa() {
                         <div className="dir">
                             <h3>Bônus do Cliente:</h3>
 
-                            {/* Gráfico de barras */}
                             <ResponsiveContainer width="100%" height={300}>
                                 <BarChart data={data}>
                                     <XAxis dataKey="name" />

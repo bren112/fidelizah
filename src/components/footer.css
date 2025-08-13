@@ -13,7 +13,7 @@ html, body {
     flex: 1;
   }
   .footer-adm {
-    background-color: var(--primary_admin) !important; 
+    background-color: var(--primary) !important; 
 
 }
 

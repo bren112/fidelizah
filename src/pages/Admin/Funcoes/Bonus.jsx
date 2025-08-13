@@ -167,6 +167,7 @@ function ClienteList() {
                     onCancel={() => setBonusModalVisible(false)}
                 >
                     <p><strong>Cliente:</strong> {clienteSelecionado.nome}</p>
+                    <p><strong>CPF:</strong> {clienteSelecionado.cpf}</p>
                     <p><strong>Funcionário:</strong></p>
                     <Input
                         placeholder="Nome do funcionário"

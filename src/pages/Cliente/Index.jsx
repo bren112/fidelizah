@@ -104,6 +104,7 @@ function Cliente() {
     const handleLogout = () => {
         localStorage.removeItem('token');
         navigate('/login');
+        localStorage.setItem('clienteLogado', 'false'); // Marca que não está mais logado como ADM
     };
 
     const handleSelectEmpresa = async (empresaId) => {
