@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../Supabase/createClient.js';
 import './Cliente.css';
 import { Link } from 'react-router-dom';
+
 import logo from './logo.png'
 
 const { Panel } = Collapse;
@@ -164,7 +165,7 @@ function Cliente() {
                     {clienteEncontrado && (
                         <img src={getImageUrl(clienteEncontrado.genero)} alt="Avatar do cliente" />
                     )}
-                    <h1><span id='span'>{clienteEncontrado ? clienteEncontrado.nome : ''}!</span></h1>
+                    <h1 id='h1'><span id='span'>{clienteEncontrado ? clienteEncontrado.nome : ''}!</span></h1>
                 </div>
                 <div className="botoes2">
                 <Button type="primary" id='red' onClick={handleLogout}>
@@ -183,36 +184,32 @@ function Cliente() {
             {clienteEncontrado ? (
                 <div className='container'>
                     <div>
-                        <h2 id='titulo'>Clique p/ ver seus Bônus!</h2>
+                        <h2 id='titulo' style={{ textAlign: 'center' }}>Empresas que você participa!</h2>
                         <br />
-                        <ul>
-                            {empresas.map(empresa => (
-                                <div className='empresa' key={empresa.id}>
-                                    <li 
-                                        id='li'
-                                        onClick={() => handleSelectEmpresa(empresa.id)} 
-                                        className='empresa'
-                                    >
-                                        <img 
-                                            src={empresa.imagem} 
-                                            className={selectedEmpresaId === empresa.id ? 'empresa-img selected' : 'empresa-img'} 
-                                        />
-                                        {empresa.nome}
-                                    </li>
-                                    {selectedEmpresaId === empresa.id && (
-                                        <Button
-                                            type="primary"
-                                            onClick={() => {
-                                                localStorage.setItem('selectedEmpresa', JSON.stringify(empresa));
-                                                navigate('/produtos');
-                                            }}
-                                        >
-                                            Resgate promo da {empresa.nome}
-                                        </Button>
-                                    )}
-                                </div>
-                            ))}
-                        </ul>
+                        <div className="empresa-grid">
+    {empresas.map(empresa => (
+        <div className='empresa' key={empresa.id}>
+            <li id='li' className='empresa'>
+                <div 
+                    className={selectedEmpresaId === empresa.id ? 'empresa-card selected' : 'empresa-card'}
+                    onClick={() => {
+                        localStorage.setItem('selectedEmpresa', JSON.stringify(empresa));
+                        navigate('/produtos');
+                    }}
+                >
+                    <img 
+                        src={empresa.imagem} 
+                        className='empresa-img'
+                        alt={empresa.nome}
+                    />
+                </div>
+                <span className="empresa-nome">{empresa.nome}</span>
+            </li>
+        </div>
+    ))}
+</div>
+
+
                     </div>
                     <div className='dir'>
                         {/* {selectedEmpresaId && (
@@ -226,26 +223,7 @@ function Cliente() {
                 <p>Buscando informações...</p>
             )}
 
-<Modal
-    title=""
-    visible={isModalVisible}
-    onCancel={handleModalClose}
-    footer={[
-        <Button key="submit" type="primary" onClick={handleResgatarBonus}>
-            Resgatar Promoções
-        </Button>,
-    ]}
->
-    <div>
-        <h3 id='titulo'>Bônus disponível</h3>
-        <img id='logo' src={logo} alt="Logo" />
-        {/* Exibe a imagem do bônus se necessário */}
-        {/* <img src={bonusImageUrl} alt="Imagem do Bônus" width={100} /> */}
-        
-        {/* Exibe o número de bônus acumulados */}
-        <p>Você tem <span id='span2'>{selectedBonusCount}</span> bônus acumulados nesta empresa!</p>
-    </div>
-</Modal>
+
 
         </div>
     );

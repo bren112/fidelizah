@@ -73,7 +73,7 @@ function Navbar() {
               )}
 
               <li className="nav__item">
-                <button onClick={logout} className="nav__link" style={{ background: 'none', border: 'none', cursor: 'pointer' }}>Logout</button>
+                <button onClick={logout} className="nav__link" style={{ background: 'none', border: 'none', cursor: 'pointer', color:'white' }}>x</button>
               </li>
             </ul>
           )

@@ -41,26 +41,30 @@ function Historico() {
         }
     };
 
-    // Função para buscar os produtos resgatados do usuário
     const fetchProdutosResgatados = async (usuarioId) => {
         try {
             const { data, error } = await supabase
                 .from('produtos_resgatados')
-                .select('*')  // Seleciona todos os dados da tabela
-                .eq('usuario_id', usuarioId);  // Filtro para o usuario_id
-
+                .select(`
+                    *,
+                    empresas(nome)
+                `)
+                .eq('usuario_id', usuarioId)
+                .order('data', { ascending: false });
+    
             if (error) {
                 console.error('Erro ao buscar produtos resgatados:', error.message);
                 setError('Erro ao buscar produtos resgatados.');
             } else {
-                console.log("Produtos resgatados:", data); // Verifique o retorno dos dados
-                setProdutosResgatados(data);  // Define os produtos resgatados no estado
+                console.log("Produtos resgatados:", data);
+                setProdutosResgatados(data);
             }
         } catch (error) {
             console.error('Erro inesperado ao buscar produtos resgatados:', error);
             setError('Erro ao buscar produtos resgatados.');
         }
     };
+    
 
     return (
         <>
@@ -81,24 +85,27 @@ function Historico() {
                         {/* Exibindo os produtos resgatados em uma tabela */}
                         <h2 className="produtos-title">Produtos Resgatados</h2>
                         {produtosResgatados.length > 0 ? (
-                            <table className="produtos-table">
-                                <thead>
-                                    <tr>
-                                        <th>Produto</th>
-                                        <th>Data de Resgate</th>
-                                        <th>Quantidade</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {produtosResgatados.map((produto) => (
-                                        <tr key={produto.id}>
-                                            <td>{produto.produto_nome}</td> {/* Nome do produto */}
-                                            <td>{produto.data ? new Date(produto.data).toLocaleDateString() : 'Data não disponível'}</td> {/* Data de resgate */}
-                                            <td>{produto.quantidade}</td> {/* Quantidade resgatada */}
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                           <table className="produtos-table">
+                           <thead>
+                               <tr>
+                                   <th>Empresa</th>
+                                   <th>Produto</th>
+                                   <th>Data de Resgate</th>
+                                   <th>Quantidade</th>
+                               </tr>
+                           </thead>
+                           <tbody>
+                               {produtosResgatados.map((produto) => (
+                                   <tr key={produto.id}>
+                                       <td>{produto.empresas?.nome || 'Empresa não disponível'}</td>
+                                       <td>{produto.produto_nome}</td>
+                                       <td>{produto.data ? new Date(produto.data).toLocaleDateString() : 'Data não disponível'}</td>
+                                       <td>{produto.quantidade}</td>
+                                   </tr>
+                               ))}
+                           </tbody>
+                       </table>
+                       
                         ) : (
                             <div>Nenhum produto resgatado encontrado.</div>
                         )}
