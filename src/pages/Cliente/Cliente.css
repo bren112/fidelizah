@@ -167,3 +167,47 @@
         height: 60px;
     }
 }
+/* Header para telas menores */
+@media (max-width: 768px) {
+    .user {
+        flex-direction: column; /* empilha avatar e botões */
+        align-items: center; /* centraliza tudo */
+        padding: 15px;
+        margin: 15px;
+    }
+
+    .user .pessoa {
+        flex-direction: column; /* avatar acima do nome */
+        gap: 10px;
+        align-items: center;
+    }
+
+    .user .botoes2 {
+        flex-direction: row; /* botões lado a lado */
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .user .botoes2 button {
+        flex: 1; /* ocupa espaço uniforme */
+        text-align: center;
+    }
+}
+
+/* Ajuste adicional para telas bem pequenas */
+@media (max-width: 480px) {
+    .user .botoes2 {
+        flex-direction: column; /* empilha botões */
+        gap: 8px;
+        width: 100%;
+    }
+
+    .user .botoes2 button {
+        width: 100%;
+    }
+
+    .user .pessoa img {
+        width: 70px;
+        height: 70px;
+    }
+}
