@@ -16,7 +16,10 @@ function Produtos() {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [quantity, setQuantity] = useState(1);
-
+    const [userId, setUserId] = useState(null);
+    const agora = new Date();
+    const horaFormatada = agora.toTimeString().split(' ')[0]; // "HH:MM:SS"
+    
     const modalRef = useRef(null);
 
     useEffect(() => {
@@ -39,16 +42,19 @@ function Produtos() {
     const fetchUserData = async (token) => {
         const { data, error } = await supabase
             .from('usuarios')
-            .select('nome, cpf')
+            .select('id, nome, cpf')
             .eq('email', token)
             .single();
-
+    
         if (!error && data) {
+            setUserId(data.id);    // adiciona isso
             setUserCPF(data.cpf);
             setUserNome(data.nome);
-        } else toast.error('Usuário não encontrado');
+        } else {
+            toast.error('Usuário não encontrado');
+        }
     };
-
+    
     const fetchProdutos = async () => {
         setLoading(true);
         const { data, error } = await supabase
@@ -88,52 +94,59 @@ function Produtos() {
     const handleResgatar = async () => {
         if (!selectedProduct) return;
         const totalPrice = selectedProduct.preco * quantity;
-
+    
         if (bonusCount < totalPrice) {
             toast.error('Você não tem bônus suficientes.');
             handleCloseModal();
             return;
         }
-
+    
         try {
             const empresaId = empresaSelecionada.id;
-
-            const { data: empresaData, error: empresaError } = await supabase
-                .from('empresas')
-                .select('whats')
-                .eq('id', empresaId)
-                .single();
-
-            if (empresaError || !empresaData) {
-                toast.error('Erro ao obter informações da empresa.');
-                handleCloseModal();
-                return;
-            }
-
-            const whatsAppLink = `https://wa.me/${empresaData.whats}?text=Olá! Gostaria de resgatar o produto ${encodeURIComponent(selectedProduct.nome)} (${quantity}x) - Valor: ${totalPrice} bônus.`;
-
+    
+            // Atualiza os bônus do cliente
             const { error: updateError } = await supabase
                 .from('clientes')
                 .update({ bonus_count: bonusCount - totalPrice })
                 .eq('cpf', userCPF)
                 .eq('empresa_id', empresaId);
-
+    
             if (updateError) {
                 toast.error('Erro ao atualizar bônus.');
                 handleCloseModal();
                 return;
             }
-
+    
+            // Grava o resgate na tabela produtos_resgatados
+            const { error: insertError } = await supabase
+                .from('produtos_resgatados')
+                .insert([{
+                    usuario_id: userId,                       // id do usuário logado
+                    empresa_id: empresaId,                    // id da empresa
+                    produto_nome: selectedProduct.nome,       // nome do produto
+                    quantidade: quantity,                     // quantidade resgatada
+                    data: new Date().toISOString(),           // data atual
+                    hora: new Date().toLocaleTimeString()     // hora atual
+                }]);
+    
+            if (insertError) {
+                toast.error('Erro ao registrar resgate.');
+                console.error('Erro ao registrar resgate:', insertError);
+                handleCloseModal();
+                return;
+            }
+    
             setBonusCount(bonusCount - totalPrice);
             toast.success(`Produto ${selectedProduct.nome} resgatado com sucesso!`);
-            window.open(whatsAppLink, '_blank');
-
+    
         } catch (error) {
             toast.error('Erro inesperado ao resgatar o produto.');
+            console.error(error);
         } finally {
             handleCloseModal();
         }
     };
+    
 
     useEffect(() => {
         if (modalOpen) {
