@@ -1,26 +1,25 @@
 import { useState } from 'react';
-import funciona from './imgs/funciona.png';
-import problema from './imgs/problema.png';
-import solucao from './imgs/solucao.png';
-import team from './imgs/team.png';
+import conta from './imgs/senhas.png';
+import user from './imgs/user.png';
+import adm from './imgs/adm.png';
 import './Sobre.css';
 
 function Testar() {
     const slides = [
         {
-          img: funciona,
+          img: conta,
           titulo: 'Quero Testar!',
           texto:
             'Disponibilizamos duas contas para testes! (de adm e como usuário)',
         },
         {
-          img: problema,
+          img: user,
           titulo: 'Conta Usuário',
           texto:
             'Email: userteste@gmail.com | Senha:1010',
         },
         {
-          img: solucao,
+          img: adm,
           titulo: 'Conta Administrador',
           texto:
             'Email: acai@gmail.com | Senha: Acai',
