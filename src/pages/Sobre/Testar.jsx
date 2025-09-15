@@ -16,7 +16,7 @@ function Testar() {
           img: user,
           titulo: 'Conta Usuário',
           texto:
-            'Email: userteste@gmail.com | Senha:1010',
+            'Email: cliente@gmail.com | Senha:1010',
         },
         {
           img: adm,
