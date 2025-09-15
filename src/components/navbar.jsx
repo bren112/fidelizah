@@ -36,8 +36,9 @@ function Navbar() {
           <li className="nav__item"><Link to="/sobre" className="nav__link">Como Funciona?</Link></li>
           <li className="nav__item"><Link to="/login" className="nav__link">Login</Link></li>
           <li className="nav__item"><Link to="/adm" className="nav__link">Adm</Link></li>
+          <li className="nav__item"><Link to="/testar" className="nav__link">Testar</Link></li>
           <li className="nav__item">
-            <button onClick={logout} className="nav__link" style={{ background: 'none', border: 'none', cursor: 'pointer', color:'white' }}>x</button>
+            {/* <button onClick={logout} className="nav__link" style={{ background: 'none', border: 'none', cursor: 'pointer', color:'white' }}>x</button> */}
           </li>
         </ul>
 
