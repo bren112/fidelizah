@@ -18,6 +18,13 @@ function Testar() {
           titulo: 'Conta Usuário',
           texto:
             'Email: userteste@gmail.com | Senha:1010',
+        },
+        {
+          img: solucao,
+          titulo: 'Conta Administrador',
+          texto:
+            'Email: acai@gmail.com | Senha: Acai',
+          style: { width: '20pc' } 
         }
       ];
       
