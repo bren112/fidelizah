@@ -22,7 +22,7 @@ function Testar() {
           img: adm,
           titulo: 'Conta Administrador',
           texto:
-            'Email: acai@gmail.com | Senha: Acai',
+            'Email: acai@gmail.com | Senha: acai',
           style: { width: '20pc' } 
         }
       ];
