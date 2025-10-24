@@ -20,8 +20,8 @@
 
 }
 #span_home{
-    color: var(--rosa);
-    font-weight: bolder;
+    color: var(--primary);
+    font-weight: 600;
 
 }
 #buttonHome{

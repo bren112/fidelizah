@@ -11,7 +11,7 @@ body { font-size: 1.6rem; }
 .nav-adm { background-color: var(--primary) !important; color: white; }
 .nav-adm .nav__link { color: white; }
 
-#logo { color: var(--ter); font-size: 3pc; font-family: 'MuseoModerno', sans-serif; }
+#logo { color: var(--ter); font-size: 2.2pc; }
 .logo { display: flex; align-items: center; }
 
 li { list-style: none; font-family: 'MuseoModerno', sans-serif; }

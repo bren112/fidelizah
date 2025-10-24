@@ -27,7 +27,7 @@ function Navbar() {
     <>
       <nav className="nav">
         <div className="logo">
-          <Link to="/" className="nav__brand" id='logo'>Fidelizah</Link>
+          <Link to="/" className="nav__brand" id='logo'>Fidelix</Link>
         </div>
 
         {/* Menu sempre visível */}

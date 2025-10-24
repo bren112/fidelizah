@@ -7,11 +7,11 @@ function Home() {
         <div className="container">
             <div className="esq">
                 <h1 id="title_home">
-                    Conheça a <span id='span_home'>Fidelizah</span>
+                    Conheça a <span id='span_home'>Fidelix</span>
                     <br />
-                    Seu Cartão,
+                    empresa / clientes,
                     <br />
-                    Suas Recompensas
+                    conectados ;)
                 </h1>
                 <img src={img} id='imgHomeMobile' alt="imgHome" />
 
