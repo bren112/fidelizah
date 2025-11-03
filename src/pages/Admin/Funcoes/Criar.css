@@ -1,62 +1,318 @@
-.criar-container {
-    max-width: 600px;
-    margin: 50px auto;
+.criar-moderno {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ffffff 0%, #c4c1c1 100%);
+    border-radius: 1pc;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
+}
+
+/* Loading States */
+.loading-container {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    gap: 16px;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 20px;
+}
+
+.error-card {
+    text-align: center;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.error-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     align-items: center;
 }
 
-.empresa-nome {
-    margin-bottom: 20px;
-    font-weight: bold;
-    color: #333;
+/* Header */
+.header-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.empresa-imagem {
+.header-content {
     display: flex;
-    justify-content: center;
-    max-width: 30%;
-    height: auto;
-    border-radius:80pc;
-    margin-bottom: 20px; /* Espaçamento inferior da imagem */
+    align-items: center;
+    gap: 20px;
 }
 
+.back-button {
+    border: none;
+    box-shadow: none;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.back-button:hover {
+    color: #764ba2;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.header-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+
+.empresa-avatar {
+    flex-shrink: 0;
+}
+
+.empresa-avatar-img {
+    border: 3px solid #667eea;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+.empresa-details {
+    flex: 1;
+}
+
+.empresa-name {
+    margin: 0 !important;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Main Content */
+.main-content {
+    margin-bottom: 24px;
+}
+
+.form-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.form-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+}
+
+.form-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 24px;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0;
+}
+
+.form-icon {
+    color: #667eea;
+    font-size: 28px;
+}
+
+/* Form Styles */
 .criar-form {
+    margin-top: 8px;
+}
+
+.criar-form .ant-form-item-label > label {
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 14px;
+}
+
+.modern-input {
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    padding: 12px 16px;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.modern-input:hover {
+    border-color: #667eea;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.modern-input:focus,
+.modern-input.ant-input-focused {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: white;
+}
+
+.input-icon {
+    color: #667eea;
+    opacity: 0.7;
+}
+
+.modern-select {
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+}
+
+.modern-select .ant-select-selector {
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 8px 16px !important;
+    height: auto !important;
+    min-height: 48px;
     display: flex;
-    flex-direction: column;
+    align-items: center;
 }
 
-.input-field {
-    margin-bottom: 15px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
+.modern-select.ant-select-focused .ant-select-selector {
+    border-color: #667eea !important;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
 }
 
-.input-field:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 5px var(--primary);
+.submit-item {
+    margin-bottom: 0;
+    margin-top: 32px;
 }
 
 .submit-button {
-    margin-top: 10px;
-    background-color: var(--rosa);
+    border-radius: 12px;
+    height: 56px;
+    font-weight: 600;
+    font-size: 16px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
     border: none;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
 }
 
 .submit-button:hover {
-    background-color: #a13189;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #5a6fd8, #6a42a0);
 }
-.direita{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+
+.submit-button:active {
+    transform: translateY(0);
 }
-#title_adm{
-    font-size: 2.3pc;
-    color: var(--primary);
-    font-weight: 400;
+
+/* Info Footer */
+.info-footer {
+    text-align: center;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    margin-top: 24px;
+}
+
+.info-footer .ant-typography {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .criar-moderno {
+        padding: 12px;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+    
+    .header-info {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .form-title {
+        font-size: 20px;
+    }
+    
+    .main-content .ant-col {
+        padding: 0 8px;
+    }
+    
+    .submit-button {
+        height: 52px;
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .criar-moderno {
+        padding: 8px;
+    }
+    
+    .form-card {
+        border-radius: 16px;
+    }
+    
+    .modern-input,
+    .modern-select .ant-select-selector {
+        padding: 10px 14px !important;
+    }
+    
+    .submit-button {
+        height: 48px;
+    }
+}
+
+/* Animation for success */
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.success-animation {
+    animation: successPulse 0.6s ease-in-out;
+}
+
+/* Custom scrollbar for form */
+.criar-form::-webkit-scrollbar {
+    width: 6px;
+}
+
+.criar-form::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.criar-form::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+.criar-form::-webkit-scrollbar-thumb:hover {
+    background: #764ba2;
 }

@@ -20,7 +20,7 @@ import Gprodutos from "./pages/Admin/Funcoes/Gprodutos";
 import RelatorioComp from "./pages/Admin/Funcoes/RelatorioComp";
 import Gerenciamento from "./pages/Admin/Venda/Gerenciamento";
 import Testar from "./pages/Sobre/Testar";
-
+import AcoesPage from "./pages/Admin/direcionaFunc/directAcoes";
 // Componente principal que envolve as rotas
 function AppContent() {
   const location = useLocation();
@@ -52,6 +52,7 @@ function AppContent() {
           <Route path="/gprodutos" element={<Gprodutos />} />
           <Route path="/rp" element={<RelatorioComp />} />
           <Route path="/gerenciamento" element={<Gerenciamento />} />
+          <Route path="/direcacoes" element={<AcoesPage />} />
           <Route path="/testar" element={<Testar />} />
         </Routes>
       </div>

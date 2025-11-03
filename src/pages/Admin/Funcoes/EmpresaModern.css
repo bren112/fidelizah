@@ -1,0 +1,673 @@
+.empresa-modern {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ffffff 0%, #c4c1c1 100%);
+    border-radius: 1pc;
+    padding: 20px;
+}
+
+.loading-container,
+.error-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 18px;
+    color: white;
+    background: linear-gradient(135deg, #ffffff 0%, #c4c1c1 100%);
+    border-radius: 1pc;
+}
+
+.error-container {
+    color: #ff4d4f;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Styles */
+.modern-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.empresa-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+}
+
+.empresa-avatar {
+    flex-shrink: 0;
+}
+
+.avatar-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #667eea;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+}
+
+.empresa-details {
+    flex: 1;
+}
+
+.welcome-title {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    color: #2d3748;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.empresa-name {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.welcome-subtitle {
+    margin: 4px 0 0 0;
+    color: #718096;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.logout-btn {
+    border-radius: 12px;
+    padding: 8px 20px;
+    height: auto;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+}
+
+/* Stats Row */
+.stats-row {
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.quick-action {
+    text-align: center;
+}
+
+.action-btn {
+    border-radius: 12px;
+    height: 48px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Search Card */
+.search-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 24px;
+}
+
+.search-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #2d3748;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search-tag {
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.search-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.search-type-select {
+    min-width: 120px;
+}
+
+.search-input {
+    flex: 1;
+    min-width: 200px;
+}
+
+.search-input .ant-input {
+    border-radius: 12px;
+}
+
+.search-button {
+    border-radius: 12px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border: none;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.search-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Client Card */
+.client-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.client-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.client-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #2d3748;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.close-client-btn {
+    border-radius: 8px;
+}
+
+.client-content {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 32px;
+}
+
+.client-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.profile-image-container {
+    position: relative;
+    text-align: center;
+}
+
+.client-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #667eea;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+}
+
+.profile-badge {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #667eea;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.profile-info {
+    text-align: center;
+}
+
+.client-name {
+    margin: 0 0 12px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.client-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.detail-item {
+    color: #718096;
+    font-size: 14px;
+}
+
+.client-stats {
+    padding: 16px;
+}
+
+.stats-title {
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+    text-align: center;
+}
+
+.charts-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    align-items: center;
+}
+
+.pie-chart {
+    position: relative;
+    text-align: center;
+}
+
+.chart-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.tickets-count {
+    font-size: 16px;
+    font-weight: 700;
+    color: #667eea;
+}
+
+.bar-chart {
+    height: 200px;
+}
+
+/* ===== MOBILE OPTIMIZATIONS ===== */
+
+/* Tablets e dispositivos menores */
+@media (max-width: 1024px) {
+    .empresa-modern {
+        padding: 16px;
+    }
+    
+    .modern-header {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .avatar-image {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .welcome-title {
+        font-size: 24px;
+    }
+    
+    .client-avatar {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+/* Mobile - Tablets pequenos */
+@media (max-width: 768px) {
+    .empresa-modern {
+        padding: 12px;
+        border-radius: 0.5pc;
+    }
+    
+    .modern-header {
+        padding: 16px;
+        border-radius: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+    
+    .empresa-info {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+    
+    .avatar-image {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .welcome-title {
+        font-size: 22px;
+        line-height: 1.3;
+    }
+    
+    .welcome-subtitle {
+        font-size: 14px;
+    }
+    
+    .logout-btn {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    /* Stats Row Mobile */
+    .stats-row {
+        margin-bottom: 16px;
+    }
+    
+    .stats-row .ant-col {
+        margin-bottom: 12px;
+    }
+    
+    .stat-card {
+        border-radius: 12px;
+        padding: 16px !important;
+    }
+    
+    .stat-card .ant-statistic-title {
+        font-size: 14px;
+    }
+    
+    .stat-card .ant-statistic-content {
+        font-size: 24px;
+    }
+    
+    .action-btn {
+        height: 44px;
+        font-size: 14px;
+    }
+    
+    /* Search Card Mobile */
+    .search-card {
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .search-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .search-title {
+        font-size: 18px;
+    }
+    
+    .search-controls {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+    
+    .search-type-select,
+    .search-input,
+    .search-button {
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .search-type-select .ant-select-selector {
+        height: 48px !important;
+        display: flex;
+        align-items: center;
+    }
+    
+    .search-button {
+        height: 48px;
+        font-size: 16px;
+    }
+    
+    /* Client Card Mobile */
+    .client-card {
+        border-radius: 12px;
+        padding: 16px;
+    }
+    
+    .client-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .client-title {
+        font-size: 18px;
+    }
+    
+    .close-client-btn {
+        width: 100%;
+    }
+    
+    .client-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .client-profile {
+        gap: 12px;
+    }
+    
+    .client-avatar {
+        width: 100px;
+        height: 100px;
+    }
+    
+    .client-name {
+        font-size: 20px;
+    }
+    
+    .client-details {
+        gap: 6px;
+    }
+    
+    .detail-item {
+        font-size: 13px;
+    }
+    
+    .charts-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .pie-chart,
+    .bar-chart {
+        height: 180px;
+    }
+    
+    .tickets-count {
+        font-size: 14px;
+    }
+}
+
+/* Mobile - Celulares pequenos */
+@media (max-width: 480px) {
+    .empresa-modern {
+        padding: 8px;
+    }
+    
+    .modern-header {
+        padding: 12px;
+        border-radius: 12px;
+    }
+    
+    .avatar-image {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .welcome-title {
+        font-size: 20px;
+    }
+    
+    .welcome-subtitle {
+        font-size: 13px;
+    }
+    
+    .search-card,
+    .client-card,
+    .stat-card {
+        padding: 12px !important;
+    }
+    
+    .search-title,
+    .client-title {
+        font-size: 16px;
+    }
+    
+    .client-avatar {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .client-name {
+        font-size: 18px;
+    }
+    
+    .stats-title {
+        font-size: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .pie-chart,
+    .bar-chart {
+        height: 160px;
+    }
+    
+    /* Melhorias de toque para mobile */
+    .search-button,
+    .action-btn,
+    .logout-btn,
+    .close-client-btn {
+        min-height: 44px;
+        font-size: 15px;
+    }
+    
+    /* Ajustes de grid para mobile muito pequeno */
+    .stats-row .ant-col {
+        margin-bottom: 8px;
+    }
+    
+    .client-details {
+        text-align: center;
+    }
+    
+    .profile-badge {
+        font-size: 11px;
+        padding: 3px 10px;
+    }
+}
+
+/* Mobile - Landscape orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+    .modern-header {
+        padding: 12px;
+    }
+    
+    .header-content {
+        flex-direction: row;
+        text-align: left;
+    }
+    
+    .empresa-info {
+        flex-direction: row;
+        text-align: left;
+    }
+    
+    .avatar-image {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .welcome-title {
+        font-size: 18px;
+    }
+    
+    .charts-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 320px) {
+    .empresa-modern {
+        padding: 6px;
+    }
+    
+    .welcome-title {
+        font-size: 18px;
+    }
+    
+    .search-title,
+    .client-title {
+        font-size: 15px;
+    }
+    
+    .client-name {
+        font-size: 16px;
+    }
+    
+    .pie-chart,
+    .bar-chart {
+        height: 140px;
+    }
+}

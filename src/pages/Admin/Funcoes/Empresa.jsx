@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from "../../../Supabase/createClient.js";
 import { useNavigate } from 'react-router-dom';
-import { Input, Button, message, Modal, Select, AutoComplete } from 'antd';
+import { Input, Button, message, Modal, Select, AutoComplete, Card, Row, Col, Tag, Statistic } from 'antd';
 import InputMask from 'react-input-mask'; 
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { Link } from 'react-router-dom';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, PieChart, Pie, Cell } from 'recharts';
 import {
     GiftOutlined,
     UserAddOutlined,
@@ -11,10 +12,17 @@ import {
     FileSearchOutlined,
     ShoppingOutlined,
     SettingOutlined,
-    FileTextOutlined
+    FileTextOutlined,
+    SearchOutlined,
+    TeamOutlined,
+    StarOutlined,
+    RocketOutlined,
+    LogoutOutlined,
+    ArrowRightOutlined
 } from '@ant-design/icons';
 
-import './Empresa.css';
+import './EmpresaModern.css';
+
 const { Option } = Select;
 
 function Empresa() {
@@ -23,30 +31,31 @@ function Empresa() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchCPF, setSearchCPF] = useState('');
-    const [searchBy, setSearchBy] = useState('cpf'); // ← Adicionado!
+    const [searchBy, setSearchBy] = useState('cpf');
     const [clienteEncontrado, setClienteEncontrado] = useState(null);
     const [showClienteInfo, setShowClienteInfo] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [clientesCount, setClientesCount] = useState(0);
     const navigate = useNavigate();
-    const [options, setOptions] = useState([]); // Para armazenar sugestões de nomes
+    const [options, setOptions] = useState([]);
 
     const handleSearchChange = async (value) => {
-        setSearchCPF(value); // Atualiza o input
+        setSearchCPF(value);
     
         if (searchBy === 'nome' && value) {
-            // Busca parcial no Supabase conforme o usuário digita
             const { data, error } = await supabase
                 .from('clientes')
                 .select('nome')
                 .ilike('nome', `%${value}%`)
                 .eq('empresa_id', empresa.id)
-                .limit(5); // limita as sugestões
+                .limit(5);
     
             if (!error) {
                 setOptions(data.map(cliente => ({ value: cliente.nome })));
             }
         }
     };
+
     useEffect(() => {
         const fetchEmpresa = async () => {
             const email = localStorage.getItem('token');
@@ -67,6 +76,12 @@ function Empresa() {
                 setError('Erro ao buscar informações da empresa: ' + error.message);
             } else {
                 setEmpresa(data);
+                // Buscar contagem de clientes
+                const { count } = await supabase
+                    .from('clientes')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('empresa_id', data.id);
+                setClientesCount(count || 0);
             }
             setLoading(false);
         };
@@ -128,197 +143,239 @@ function Empresa() {
         setSearchCPF('');
     };
 
-    const handleOpenLinksModal = () => {
-        setIsModalVisible(true);
-    };
+    // Dados para o gráfico de pizza
+    const pieData = [
+        { name: 'Tickets', value: clienteEncontrado?.bonus_count || 0 },
+        { name: 'Restante', value: 10 - (clienteEncontrado?.bonus_count || 0) }
+    ];
 
-    const handleCloseLinksModal = () => {
-        setIsModalVisible(false);
-    };
+    const COLORS = ['#667eea', '#e2e8f0'];
 
-    if (loading) return <p>Carregando...</p>;
-    if (error) return <p>{error}</p>;
+    if (loading) return <div className="loading-container">Carregando...</div>;
+    if (error) return <div className="error-container">{error}</div>;
 
     const data = [
         { name: 'Tickets', value: clienteEncontrado?.bonus_count || 0 },
     ];
 
     return (
-        <div className="tudo">
-            {empresa.imagem && (
-                <div className="empresa-image-container">
-                    <img 
-                        id='-imgempresa'
-                        src={empresa.imagem} 
-                        alt="Imagem da empresa" 
-                        className="empresa-image" 
-                    />
-                </div>
-            )}
-            <div className="container_empresa">
-                <h1 id='tile'>Olá <span id='span'>{empresa.nome}</span></h1>
-                <Button type="default" onClick={handleLogout} className="logout-button">Sair</Button>
-            </div>
-
-            <Button type="primary" onClick={handleOpenLinksModal} id='btnprincipal1' className="links-button">Minhas Ações</Button>
-
-            <Modal
-                    title="📌 Escolha sua Ação"
-                    open={isModalVisible} // no AntD 5 o prop é 'open', se for AntD 4 mantenha 'visible'
-                    onCancel={handleCloseLinksModal}
-                    footer={null}
-                    centered
-                    bodyStyle={{ padding: 20 }}
-                >
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-
-                <Button
-                    type="primary"
-                    icon={<GiftOutlined />}
-                    block
-                    onClick={() => navigate('/gerenciamento')}
-                >
-                    Sistema de Bônus
-                </Button>
-
-                <Button
-                    type="default"
-                    icon={<FileTextOutlined />}
-                    block
-                    onClick={() => navigate('/bonus')}
-                >
-                    Bônus Básico
-                </Button>
-
-                <Button
-                    type="default"
-                    icon={<UserAddOutlined />}
-                    block
-                    onClick={() => navigate('/criar')}
-                >
-                    Criar Cliente
-                </Button>
-
-                <Button
-                    type="default"
-                    icon={<AppstoreAddOutlined />}
-                    block
-                    onClick={() => navigate('/max')}
-                >
-                    Criar Produto
-                </Button>
-
-                <Button
-                    type="dashed"
-                    icon={<FileSearchOutlined />}
-                    block
-                    onClick={() => navigate('/gc')}
-                >
-                    Relatório Bônus
-                </Button>
-
-                <Button
-                    type="dashed"
-                    icon={<ShoppingOutlined />}
-                    block
-                    onClick={() => navigate('/relatorio')}
-                >
-                    Relatório Produtos
-                </Button>
-
-                <Button
-                    type="text"
-                    icon={<SettingOutlined />}
-                    block
-                    onClick={() => navigate('/gprodutos')}
-                >
-                    Gerenciar Produtos
-                </Button>
-                
-            </div>
-        </Modal>
-
-            <div className="search-area">
-                <h2>Buscar Cliente</h2>
-<div className="searchTipo">
-                <Select 
-                    value={searchBy} 
-                    onChange={setSearchBy} 
-                    style={{ width: 120, marginRight: 10 }}
-                >
-                    <Option value="cpf">CPF</Option>
-                    <Option value="nome">Nome</Option>
-                </Select>
-               <br />
-        
-               {searchBy === 'cpf' ? (
-    <InputMask
-        mask="999.999.999-99"
-        value={searchCPF}
-        onChange={(e) => setSearchCPF(e.target.value)}
-        placeholder="Digite o CPF"
-        className="input-cpf"
-    />
-) : searchBy === 'nome' ? (
-    <AutoComplete
-        options={options}
-        onChange={handleSearchChange}
-        filterOption={false}
-        className="input-nome"
-    >
-        <Input
-            value={searchNome}
-            onChange={(e) => setSearchNome(e.target.value)}
-            placeholder="Digite o nome"
-            className="input_nome"
-        />
-    </AutoComplete>
-) : null}
-
-<br /></div>
-
-                <Button 
-                    type="primary" 
-                    onClick={handleSearch} 
-                    id='btnprincipal2' 
-                    className="search-button"
-                >
-                    Buscar
-                </Button>
-            </div>
-
-            {showClienteInfo && clienteEncontrado && (
-                <div className="cliente-info">
-                    <h3 id='centro'>Dados do Cliente:</h3>
-                    <div className="container">
-                        <div className="esquerda">
-                            <p id='title'>{clienteEncontrado.nome}</p>
-                            <img 
-                                src={getImageUrl(clienteEncontrado.genero)} 
-                                alt={`Imagem de ${clienteEncontrado.genero}`} 
-                                className="cliente-image"
-                            />
-                            <p><strong>Telefone:</strong> {clienteEncontrado.telefone}</p>
-                            <p><strong>CPF:</strong> {clienteEncontrado.cpf}</p>
-                            <p><strong>Gênero:</strong> {clienteEncontrado.genero}</p>
-                        </div>
-                        <div className="dir">
-                            <h3>Bônus do Cliente:</h3>
-
-                            <ResponsiveContainer width="100%" height={300}>
-                                <BarChart data={data}>
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Bar dataKey="value" fill="#6c63ff" />
-                                </BarChart>
-                            </ResponsiveContainer>
-
-                            <Button type="default" onClick={handleCloseClienteInfo} className="close-button">Fechar</Button>
+        <div className="empresa-modern">
+            {/* Header */}
+            <div className="modern-header">
+                <div className="header-content">
+                    <div className="empresa-info">
+                        {empresa.imagem && (
+                            <div className="empresa-avatar">
+                                <img 
+                                    src={empresa.imagem} 
+                                    alt="Imagem da empresa" 
+                                    className="avatar-image" 
+                                />
+                            </div>
+                        )}
+                        <div className="empresa-details">
+                            <h1 className="welcome-title">
+                                Bem-vindo, <span className="empresa-name">{empresa.nome}</span>
+                            </h1>
+                            <p className="welcome-subtitle">Gerencie seus clientes e promoções</p>
                         </div>
                     </div>
+                    <Button 
+                        type="primary" 
+                        danger 
+                        onClick={handleLogout} 
+                        className="logout-btn"
+                        icon={<LogoutOutlined />}
+                    >
+                        Sair
+                    </Button>
                 </div>
+            </div>
+
+            {/* Quick Stats */}
+            <Row gutter={[16, 16]} className="stats-row">
+                <Col xs={24} sm={8}>
+                    <Card className="stat-card" bordered={false}>
+                        <Statistic
+                            title="Total de Clientes"
+                            value={clientesCount}
+                            prefix={<TeamOutlined />}
+                            valueStyle={{ color: '#667eea' }}
+                        />
+                    </Card>
+                </Col>
+                <Col xs={24} sm={8}>
+                    <Card className="stat-card" bordered={false}>
+                        <Statistic
+                            title="Ações Disponíveis"
+                            value={7}
+                            prefix={<RocketOutlined />}
+                            valueStyle={{ color: '#f093fb' }}
+                        />
+                    </Card>
+                </Col>
+                <Col xs={24} sm={8}>
+                    <Card className="stat-card" bordered={false}>
+                        <div className="quick-action">
+                            <Link to='/direcacoes'>
+                                <Button 
+                                    type="primary" 
+                                    className="action-btn"
+                                    icon={<ArrowRightOutlined />}
+                                    block
+                                >
+                                    Ver Todas as Ações
+                                </Button>
+                            </Link>
+                        </div>
+                    </Card>
+                </Col>
+            </Row>
+
+            {/* Search Section */}
+            <Card className="search-card" bordered={false}>
+                <div className="search-header">
+                    <h2 className="search-title">
+                        <SearchOutlined /> Buscar Cliente
+                    </h2>
+                    <Tag color="blue" className="search-tag">
+                        {searchBy === 'cpf' ? 'Busca por CPF' : 'Busca por Nome'}
+                    </Tag>
+                </div>
+                
+                <div className="search-controls">
+                    <Select 
+                        value={searchBy} 
+                        onChange={setSearchBy} 
+                        className="search-type-select"
+                        size="large"
+                    >
+                        <Option value="cpf">CPF</Option>
+                        <Option value="nome">Nome</Option>
+                    </Select>
+                    
+                    {searchBy === 'cpf' ? (
+                        <InputMask
+                            mask="999.999.999-99"
+                            value={searchCPF}
+                            onChange={(e) => setSearchCPF(e.target.value)}
+                            placeholder="Digite o CPF do cliente"
+                            className="search-input"
+                        >
+                            {(inputProps) => <Input {...inputProps} size="large" />}
+                        </InputMask>
+                    ) : (
+                        <AutoComplete
+                            options={options}
+                            onChange={handleSearchChange}
+                            filterOption={false}
+                            className="search-input"
+                        >
+                            <Input
+                                value={searchNome}
+                                onChange={(e) => setSearchNome(e.target.value)}
+                                placeholder="Digite o nome do cliente"
+                                size="large"
+                            />
+                        </AutoComplete>
+                    )}
+                    
+                    <Button 
+                        type="primary" 
+                        onClick={handleSearch} 
+                        className="search-button"
+                        icon={<SearchOutlined />}
+                        size="large"
+                    >
+                        Buscar Cliente
+                    </Button>
+                </div>
+            </Card>
+
+            {/* Client Info */}
+            {showClienteInfo && clienteEncontrado && (
+                <Card className="client-card" bordered={false}>
+                    <div className="client-header">
+                        <h2 className="client-title">
+                            <StarOutlined /> Dados do Cliente
+                        </h2>
+                        <Button 
+                            onClick={handleCloseClienteInfo} 
+                            className="close-client-btn"
+                        >
+                            Fechar
+                        </Button>
+                    </div>
+                    
+                    <div className="client-content">
+                        <div className="client-profile">
+                            <div className="profile-image-container">
+                                <img 
+                                    src={getImageUrl(clienteEncontrado.genero)} 
+                                    alt={`Imagem de ${clienteEncontrado.genero}`} 
+                                    className="client-avatar"
+                                />
+                                <div className="profile-badge">
+                                    {clienteEncontrado.genero}
+                                </div>
+                            </div>
+                            <div className="profile-info">
+                                <h3 className="client-name">{clienteEncontrado.nome}</h3>
+                                <div className="client-details">
+                                    <div className="detail-item">
+                                        <strong>Telefone:</strong> {clienteEncontrado.telefone}
+                                    </div>
+                                    <div className="detail-item">
+                                        <strong>CPF:</strong> {clienteEncontrado.cpf}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div className="client-stats">
+                            <h4 className="stats-title">Bônus do Cliente</h4>
+                            <div className="charts-container">
+                                <div className="pie-chart">
+                                    <ResponsiveContainer width="100%" height={200}>
+                                        <PieChart>
+                                            <Pie
+                                                data={pieData}
+                                                cx="50%"
+                                                cy="50%"
+                                                innerRadius={60}
+                                                outerRadius={80}
+                                                fill="#8884d8"
+                                                paddingAngle={5}
+                                                dataKey="value"
+                                            >
+                                                {pieData.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip />
+                                        </PieChart>
+                                    </ResponsiveContainer>
+                                    <div className="chart-label">
+                                        <span className="tickets-count">
+                                            {clienteEncontrado.bonus_count || 0} Tickets
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div className="bar-chart">
+                                    <ResponsiveContainer width="100%" height={200}>
+                                        <BarChart data={data}>
+                                            <XAxis dataKey="name" />
+                                            <YAxis />
+                                            <Tooltip />
+                                            <Bar dataKey="value" fill="#667eea" radius={[4, 4, 0, 0]} />
+                                        </BarChart>
+                                    </ResponsiveContainer>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </Card>
             )}
         </div>
     );

@@ -1,24 +1,57 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, InputNumber, Button, message, Modal, Card, Row, Col, AutoComplete } from 'antd';
+import { 
+  Form, 
+  Input, 
+  InputNumber, 
+  Button, 
+  message, 
+  Modal, 
+  Card, 
+  Row, 
+  Col, 
+  AutoComplete, 
+  Typography,
+  Tag,
+  Statistic,
+  Steps,
+  Avatar,
+  Space,
+  Divider
+} from 'antd';
 import { supabase } from '../../../Supabase/createClient';
 import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
+import { 
+  PlusOutlined, 
+  GiftOutlined, 
+  UserOutlined, 
+  DollarOutlined, 
+  ShoppingOutlined,
+  TeamOutlined,
+  ArrowLeftOutlined,
+  CheckCircleOutlined,
+  StarOutlined,
+  CalendarOutlined
+} from '@ant-design/icons';
+
+const { Title, Text } = Typography;
+const { Step } = Steps;
+import './promocoes.css'
 function Gerenciamento() {
   const [empresaId, setEmpresaId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [promocoes, setPromocoes] = useState([]);
   const [clientes, setClientes] = useState([]);
   const [clienteOptions, setClienteOptions] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false); // Modal de criação
-  const [modalPromocaoVisible, setModalPromocaoVisible] = useState(false); // Modal de registrar bônus
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [modalPromocaoVisible, setModalPromocaoVisible] = useState(false);
   const [promoSelecionada, setPromoSelecionada] = useState(null);
   const [clienteSelecionado, setClienteSelecionado] = useState(null);
-  const [etapa, setEtapa] = useState(1); 
+  const [etapa, setEtapa] = useState(1);
   const [funcionarioNome, setFuncionarioNome] = useState('');
   const [valorCompra, setValorCompra] = useState('');
   const [observacao, setObservacao] = useState('');
 
-  // Buscar empresa e promoções/clientes
   useEffect(() => {
     const fetchEmpresaId = async () => {
       const email = localStorage.getItem('token'); 
@@ -30,7 +63,7 @@ function Gerenciamento() {
       try {
         const { data, error } = await supabase
           .from('empresas')
-          .select('id')
+          .select('id, nome')
           .eq('email', email)
           .single();
 
@@ -86,9 +119,12 @@ function Gerenciamento() {
       .map(c => ({
         value: c.id.toString(),
         label: (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <img src={getAvatarUrl(c.genero)} alt={c.nome} style={{ width: 30, height: 30, borderRadius: '50%' }} />
-            <span>{c.nome}{c.cpf ? ` - ${c.cpf}` : ''}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Avatar src={getAvatarUrl(c.genero)} size="small" />
+            <div>
+              <div style={{ fontWeight: 600 }}>{c.nome}</div>
+              {c.cpf && <div style={{ fontSize: 12, color: '#666' }}>{c.cpf}</div>}
+            </div>
           </div>
         ),
       }));
@@ -100,7 +136,6 @@ function Gerenciamento() {
     setClienteSelecionado(cliente);
   };
 
-  // Cadastro de nova promoção
   const onFinish = async (values) => {
     if (!empresaId) return message.error('Empresa não encontrada');
     setLoading(true);
@@ -115,7 +150,10 @@ function Gerenciamento() {
         },
       ]);
       if (error) throw error;
-      message.success('Promoção cadastrada com sucesso!');
+      message.success({
+        content: 'Promoção cadastrada com sucesso!',
+        icon: <CheckCircleOutlined style={{ color: '#52c41a' }} />,
+      });
       setIsModalVisible(false);
       fetchPromocoes(empresaId);
     } catch (error) {
@@ -125,7 +163,6 @@ function Gerenciamento() {
     }
   };
 
-  // Registrar bônus no cliente
   const registrarBonus = async () => {
     if (!clienteSelecionado || !funcionarioNome || !valorCompra) {
       return message.warning('Preencha todos os campos.');
@@ -137,14 +174,12 @@ function Gerenciamento() {
   
     if (isNaN(valorCompraNum) || valorCompraNum <= 0) return message.warning('Valor da compra inválido');
   
-    // Calcula quantas vezes o valor da compra atinge o valor da promoção
     const vezes = Math.floor(valorCompraNum / valorPromo);
     if (vezes <= 0) return message.warning('O valor da compra não atinge o mínimo da promoção');
   
     const bonusTotal = vezes * bonusPromo;
     const dataHora = dayjs().format('YYYY-MM-DD HH:mm:ss');
   
-    // Atualiza bonus_count do cliente
     const { error: bonusError } = await supabase
       .from('clientes')
       .update({ bonus_count: (parseInt(clienteSelecionado.bonus_count) || 0) + bonusTotal })
@@ -152,7 +187,6 @@ function Gerenciamento() {
   
     if (bonusError) return message.error('Erro ao atualizar bônus: ' + bonusError.message);
   
-    // Insere no relatório
     const { error: relatorioError } = await supabase
       .from('relatorios')
       .insert([{
@@ -166,7 +200,11 @@ function Gerenciamento() {
   
     if (relatorioError) return message.error('Erro ao registrar no relatório: ' + relatorioError.message);
   
-    message.success(`Bônus registrado com sucesso! Total: ${bonusTotal} bônus`);
+    message.success({
+      content: `Bônus registrado com sucesso! Total: ${bonusTotal} bônus`,
+      icon: <CheckCircleOutlined style={{ color: '#52c41a' }} />,
+    });
+    
     setClienteSelecionado(null);
     setEtapa(1);
     setFuncionarioNome('');
@@ -174,122 +212,360 @@ function Gerenciamento() {
     setObservacao('');
     setModalPromocaoVisible(false);
   };
-  
-  return (
-    <div style={{ padding: 20 }}>
-      
-      <h1 id='title' style={{ textAlign: 'center' , color: 'var(--rosa)',  fontSize: '2pc'}}>Gerenciamento de Promoções</h1>
 
-      {/* Botão criar promoção */}
-      <Button type="primary" style={{ marginBottom: 20, backgroundColor:'black'}} onClick={() => setIsModalVisible(true)}>
-        Cadastrar Nova Promoção
-      </Button>
+  return (
+    <div className="gerenciamento-moderno">
+      {/* Header */}
+      <Card className="header-card" bordered={false}>
+        <div className="header-content">
+          <Link to="/adm">
+            <Button type="text" className="back-button" icon={<ArrowLeftOutlined />}>
+              Voltar
+            </Button>
+          </Link>
+          <div className="header-info">
+            <div className="title-section">
+              <Title level={2} className="main-title">
+                <GiftOutlined /> Sistema de Bônus
+              </Title>
+              <Text type="secondary">Gerencie promoções e bônus dos clientes</Text>
+            </div>
+          </div>
+          <Button 
+            type="primary" 
+            icon={<PlusOutlined />}
+            className="new-promotion-btn"
+            onClick={() => setIsModalVisible(true)}
+            size="large"
+          >
+            Nova Promoção
+          </Button>
+        </div>
+      </Card>
+
+      {/* Stats */}
+      <Row gutter={[16, 16]} className="stats-row">
+        <Col xs={24} sm={8}>
+          <Card className="stat-card" bordered={false}>
+            <Statistic
+              title="Total de Promoções"
+              value={promocoes.length}
+              prefix={<GiftOutlined />}
+              valueStyle={{ color: '#667eea' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={8}>
+          <Card className="stat-card" bordered={false}>
+            <Statistic
+              title="Clientes Cadastrados"
+              value={clientes.length}
+              prefix={<TeamOutlined />}
+              valueStyle={{ color: '#f093fb' }}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={8}>
+          <Card className="stat-card" bordered={false}>
+            <Statistic
+              title="Promoção Mais Recente"
+              value={promocoes.length > 0 ? 1 : 0}
+              prefix={<StarOutlined />}
+              valueStyle={{ color: '#4fd1c5' }}
+            />
+          </Card>
+        </Col>
+      </Row>
 
       {/* Modal de criação de promoção */}
       <Modal
-        title="Cadastrar Promoção"
+        title={
+          <div className="modal-title">
+            <PlusOutlined /> Nova Promoção
+          </div>
+        }
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
+        className="promotion-modal"
+        width={600}
       >
-        <Form layout="vertical" onFinish={onFinish}>
-          <Form.Item name="nome_promocao" label="Nome da Promoção" rules={[{ required: true }]}>
-            <Input placeholder="Ex: 100 Reais em compras ganha 4 bônus" />
+        <Form layout="vertical" onFinish={onFinish} className="modern-form">
+          <Form.Item 
+            name="nome_promocao" 
+            label="Nome da Promoção" 
+            rules={[{ required: true, message: 'Digite o nome da promoção' }]}
+          >
+            <Input 
+              prefix={<GiftOutlined />}
+              placeholder="Ex: A cada R$ 100 em compras ganhe 4 bônus"
+              size="large"
+              className="modern-input"
+            />
           </Form.Item>
-          <Form.Item name="valor_venda" label="Valor de Venda" rules={[{ required: true }]}>
-            <InputNumber placeholder="100.00" style={{ width: '100%' }} min={0} step={0.01} />
-          </Form.Item>
-          <Form.Item name="bonus" label="Bônus" rules={[{ required: true }]}>
-            <InputNumber placeholder="4" style={{ width: '100%' }} min={0} />
-          </Form.Item>
+          
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item 
+                name="valor_venda" 
+                label="Valor de Venda" 
+                rules={[{ required: true, message: 'Digite o valor' }]}
+              >
+                <InputNumber 
+                  placeholder="100.00" 
+                  style={{ width: '100%' }} 
+                  min={0} 
+                  step={0.01}
+                  prefix="R$"
+                  size="large"
+                  className="modern-input"
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item 
+                name="bonus" 
+                label="Bônus" 
+                rules={[{ required: true, message: 'Digite a quantidade de bônus' }]}
+              >
+                <InputNumber 
+                  placeholder="4" 
+                  style={{ width: '100%' }} 
+                  min={0}
+                  prefix={<StarOutlined />}
+                  size="large"
+                  className="modern-input"
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          
           <Form.Item name="imagem_url" label="URL da Imagem">
-            <Input placeholder="https://..." />
+            <Input 
+              placeholder="https://exemplo.com/imagem.jpg"
+              prefix={<ShoppingOutlined />}
+              size="large"
+              className="modern-input"
+            />
           </Form.Item>
-          <Button type="primary" htmlType="submit" block loading={loading}>
-            Cadastrar Promoção
+          
+          <Button 
+            type="primary" 
+            htmlType="submit" 
+            block 
+            loading={loading}
+            size="large"
+            className="submit-button"
+          >
+            <PlusOutlined /> Cadastrar Promoção
           </Button>
         </Form>
       </Modal>
 
       {/* Modal de registrar bônus */}
       <Modal
-        title={promoSelecionada?.nome_promocao || 'Promoção'}
+        title={
+          <div className="modal-title">
+            <GiftOutlined /> {promoSelecionada?.nome_promocao || 'Registrar Bônus'}
+          </div>
+        }
         open={modalPromocaoVisible}
-        onCancel={() => setModalPromocaoVisible(false)}
+        onCancel={() => {
+          setModalPromocaoVisible(false);
+          setEtapa(1);
+          setClienteSelecionado(null);
+        }}
         footer={null}
+        className="bonus-modal"
+        width={600}
       >
-        {etapa === 1 && (
-          <>
-            <AutoComplete
-              options={clienteOptions}
-              style={{ width: '100%' }}
-              onSearch={handleSearchCliente}
-              onSelect={onSelectCliente}
-              placeholder="Digite o nome ou CPF do cliente"
-            />
-            <Button style={{ marginTop: 10 }} type="primary" onClick={() => clienteSelecionado ? setEtapa(2) : message.warning('Selecione um cliente primeiro')}>
-              Continuar
-            </Button>
-          </>
-        )}
+        <Steps current={etapa - 1} className="bonus-steps">
+          <Step title="Selecionar Cliente" />
+          <Step title="Registrar Compra" />
+        </Steps>
 
-        {etapa === 2 && clienteSelecionado && (
-          <>
-         
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <img src={getAvatarUrl(clienteSelecionado.genero)} alt={clienteSelecionado.nome} style={{ width: 50, height: 50, borderRadius: '50%' }} />
-              <span style={{ fontWeight: 'bold', fontSize: 16 }}>{clienteSelecionado.nome}</span>
+        <div className="steps-content">
+          {etapa === 1 && (
+         <div className="step-1">
+         <Text strong style={{ display: 'block', marginBottom: 16 }}>
+           Selecione o cliente:
+         </Text>
+         <AutoComplete
+           options={clienteOptions}
+           style={{ width: '100%' }}
+           onSearch={handleSearchCliente}
+           onSelect={onSelectCliente}
+           placeholder="Digite o nome ou CPF do cliente"
+           size="large"
+         >
+           <Input 
+             className="modern-input"
+             style={{ 
+               borderRadius: '12px',
+               border: '2px solid #e2e8f0',
+               padding: '12px 16px',
+               transition: 'all 0.3s ease'
+             }}
+           />
+         </AutoComplete>
+         <Button 
+           type="primary" 
+           style={{ marginTop: '2pc', width: '100%' }} 
+           onClick={() => clienteSelecionado ? setEtapa(2) : message.warning('Selecione um cliente primeiro')}
+           size="large"
+           className="modern-button"
+         >
+           Continuar
+         </Button>
+       </div>
+          )}
+
+          {etapa === 2 && clienteSelecionado && (
+            <div className="step-2">
+              <div className="client-info">
+                <Space size={16}>
+                  <Avatar src={getAvatarUrl(clienteSelecionado.genero)} size={64} />
+                  <div>
+                    <Title level={4} style={{ margin: 0 }}>{clienteSelecionado.nome}</Title>
+                    <Text type="secondary">CPF: {clienteSelecionado.cpf}</Text>
+                    <div style={{ marginTop: 4 }}>
+                      <Tag color="blue">
+                        <StarOutlined /> {clienteSelecionado.bonus_count || 0} bônus
+                      </Tag>
+                    </div>
+                  </div>
+                </Space>
+              </div>
+
+              <Divider />
+
+              <Form layout="vertical" className="modern-form">
+                <Form.Item label="Valor da Compra">
+                  <Input 
+                    value={valorCompra} 
+                    onChange={e => setValorCompra(e.target.value)} 
+                    placeholder="Ex: 100.00"
+                    prefix="R$"
+                    size="large"
+                    className="modern-input"
+                  />
+                </Form.Item>
+                
+                <Form.Item label="Descrição da Compra">
+                  <Input.TextArea
+                    value={observacao}
+                    onChange={e => setObservacao(e.target.value)}
+                    placeholder="Ex: 2 açaís de R$ 10,00 cada"
+                    rows={3}
+                    className="modern-textarea"
+                  />
+                </Form.Item>
+
+                <Form.Item label="Funcionário Responsável">
+                  <Input 
+                    value={funcionarioNome} 
+                    onChange={e => setFuncionarioNome(e.target.value)} 
+                    placeholder="Nome do funcionário"
+                    prefix={<UserOutlined />}
+                    size="large"
+                    className="modern-input"
+                  />
+                </Form.Item>
+              </Form>
+
+              <div className="action-buttons">
+                <Button onClick={() => setEtapa(1)} size="large">
+                  Voltar
+                </Button>
+                <Button type="primary" onClick={registrarBonus} size="large">
+                  <CheckCircleOutlined /> Registrar Bônus
+                </Button>
+              </div>
             </div>
-
-            <Form layout="vertical" style={{ marginTop: 20 }}>
-              <Form.Item label="Valor da Compra">
-                <Input value={valorCompra} onChange={e => setValorCompra(e.target.value)} placeholder="Ex: R$ 100,00" />
-              </Form.Item>
-              <Form.Item label="Descrição da compra">
-                <Input.TextArea
-                  value={observacao}
-                  onChange={e => setObservacao(e.target.value)}
-                  placeholder="Ex: 2 açaís de 10 reais cada"
-                  rows={4} // você pode ajustar a quantidade de linhas visíveis
-                />
-              </Form.Item>
-
-              <Form.Item label="Funcionário">
-                <Input value={funcionarioNome} onChange={e => setFuncionarioNome(e.target.value)} placeholder="Nome do funcionário" />
-              </Form.Item>
-            </Form>
-
-            <div style={{ marginTop: 10, display: 'flex', gap: 10 }}>
-              <Button onClick={() => setEtapa(1)}>Voltar</Button>
-              <Button type="primary" onClick={registrarBonus}>Registrar Bônus</Button>
-            </div>
-          </>
-        )}
+          )}
+        </div>
       </Modal>
 
       {/* Lista de promoções */}
-      <Row gutter={[16, 16]}>
-        {promocoes.map((promo) => (
-          <Col key={promo.id} xs={24} sm={12} md={8} lg={6}>
-            <Card
-              title={promo.nome_promocao}
-              style={{ textAlign: 'center' }}
-              hoverable
-              cover={
-                <img
-                  alt={promo.nome_promocao}
-                  src={promo.imagem_url}
-                  style={{ cursor: 'pointer', height: 200, objectFit: 'cover' }}
-                  onClick={() => { setPromoSelecionada(promo); setModalPromocaoVisible(true); setEtapa(1); setClienteSelecionado(null); }}
-                />
-              }
-            >
-              <p>A cada: <span style={{ color: 'var(--primary)' , fontWeight: '400'}}> R${promo.valor_venda.toFixed(2)}</span> gastos</p>
-              <p>Ganha: <span style={{ color: 'var(--rosa)' , fontWeight: '400'}}> {promo.bonus} </span>bônus </p>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+      <div className="promotions-section">
+        <Title level={3} className="title">
+          <GiftOutlined /> Promoções Ativas
+        </Title>
+        
+        {promocoes.length === 0 ? (
+          <Card className="empty-card">
+            <div className="empty-state">
+              <GiftOutlined style={{ fontSize: 48, color: '#d9d9d9', marginBottom: 16 }} />
+              <Text type="secondary">Nenhuma promoção cadastrada</Text>
+              <Button 
+                type="primary" 
+                onClick={() => setIsModalVisible(true)}
+                style={{ marginTop: 16 }}
+              >
+                <PlusOutlined /> Criar Primeira Promoção
+              </Button>
+            </div>
+          </Card>
+        ) : (
+          <Row gutter={[24, 24]}>
+            {promocoes.map((promo) => (
+              <Col key={promo.id} xs={24} sm={12} lg={8} xl={6}>
+                <Card
+                  className="promotion-card"
+                  hoverable
+                  cover={
+                    <div className="promotion-image-container">
+                      <img
+                        alt={promo.nome_promocao}
+                        src={promo.imagem_url}
+                        className="promotion-image"
+                        onClick={() => { 
+                          setPromoSelecionada(promo); 
+                          setModalPromocaoVisible(true); 
+                          setEtapa(1); 
+                          setClienteSelecionado(null); 
+                        }}
+                      />
+                      <div className="promotion-overlay">
+                        <Button 
+                          type="primary" 
+                          shape="round"
+                          icon={<GiftOutlined />}
+                          onClick={() => { 
+                            setPromoSelecionada(promo); 
+                            setModalPromocaoVisible(true); 
+                            setEtapa(1); 
+                            setClienteSelecionado(null); 
+                          }}
+                        >
+                          Usar Promoção
+                        </Button>
+                      </div>
+                    </div>
+                  }
+                >
+                  <div className="promotion-content">
+                    <Title level={4} className="promotion-title">{promo.nome_promocao}</Title>
+                    <div className="promotion-details">
+                      <div className="promotion-item">
+                        <DollarOutlined className="promotion-icon" />
+                        <span>R$ {promo.valor_venda.toFixed(2)}</span>
+                      </div>
+                      <div className="promotion-item">
+                        <StarOutlined className="promotion-icon bonus" />
+                        <span>{promo.bonus} bônus</span>
+                      </div>
+                    </div>
+                    <Tag color="green" className="promotion-tag">
+                      Ativa
+                    </Tag>
+                  </div>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        )}
+      </div>
     </div>
   );
 }
