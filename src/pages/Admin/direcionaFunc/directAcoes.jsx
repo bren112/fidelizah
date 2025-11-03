@@ -12,7 +12,7 @@ import {
     FileTextOutlined
 } from '@ant-design/icons';
 
-import './acoesPage.css'; // Vamos criar este CSS
+import './acoesPage.css'; 
 
 function AcoesPage() {
     const [empresa, setEmpresa] = useState(null);
