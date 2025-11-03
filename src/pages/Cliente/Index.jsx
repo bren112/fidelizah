@@ -1,13 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import { Button, message, Collapse, Modal } from 'antd';
+import { 
+    Button, 
+    message, 
+    Modal, 
+    Card, 
+    Row, 
+    Col, 
+    Typography, 
+    Avatar, 
+    Space, 
+    Tag,
+    Statistic,
+    Skeleton
+} from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../Supabase/createClient.js';
 import './Cliente.css';
 import { Link } from 'react-router-dom';
+import { 
+    LogoutOutlined, 
+    BookOutlined, 
+    ShopOutlined, 
+    TrophyOutlined,
+    StarFilled,
+    CrownOutlined,
+    UserOutlined,
+    TeamOutlined,
+    GiftOutlined
+} from '@ant-design/icons';
 
-import logo from './logo.png'
-
-const { Panel } = Collapse;
+const { Title, Text } = Typography;
 
 function Cliente() {
     const [clienteEncontrado, setClienteEncontrado] = useState(null);
@@ -17,10 +39,10 @@ function Cliente() {
     const [selectedBonusCount, setSelectedBonusCount] = useState(0);
     const [selectedEmpresaImagem, setSelectedEmpresaImagem] = useState('');
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [carregando, setCarregando] = useState(true); // Estado para controlar o carregamento
+    const [carregando, setCarregando] = useState(true);
     const navigate = useNavigate();
-    const bonusImageUrl = 'https://jrbpwisclowinultbehj.supabase.co/storage/v1/object/public/ticket/ticket.png';
 
+    // LÓGICA ORIGINAL MANTIDA
     useEffect(() => {
         const verificarCPF = async () => {
             const token = localStorage.getItem('token');
@@ -33,7 +55,7 @@ function Cliente() {
         
             const { data: usuarioData, error: usuarioError } = await supabase
                 .from('usuarios')
-                .select('cpf')
+                .select('cpf, nome, genero, email')
                 .eq('email', token)
                 .single();
         
@@ -55,7 +77,7 @@ function Cliente() {
                 setCarregando(false);
             } else if (clienteData.length > 0) {
                 const cliente = clienteData[0];
-                setClienteEncontrado(cliente);
+                setClienteEncontrado({ ...usuarioData, ...cliente });
                 message.success('Cliente encontrado!');
         
                 const { data: empresasData, error: empresasError } = await supabase
@@ -78,7 +100,7 @@ function Cliente() {
                     } else {
                         setEmpresas(empresasDetalhes || []);
         
-                        // Agora, buscamos o bônus de cada empresa
+                        // Buscar bônus para cada empresa (mantido igual)
                         empresasDetalhes.forEach(async (empresa) => {
                             const { data: bonusData, error: bonusError } = await supabase
                                 .from('clientes')
@@ -95,7 +117,6 @@ function Cliente() {
                         });
                     }
                 } else {
-                    // Nenhuma empresa encontrada para o usuário
                     setEmpresas([]);
                 }
             } else {
@@ -109,6 +130,7 @@ function Cliente() {
         verificarCPF();
     }, [navigate]);
 
+    // HANDLERS ORIGINAIS MANTIDOS
     const handleLogout = () => {
         localStorage.removeItem('token');
         navigate('/login');
@@ -145,6 +167,11 @@ function Cliente() {
         }
     };
 
+    const handleEmpresaClick = (empresa) => {
+        localStorage.setItem('selectedEmpresa', JSON.stringify(empresa));
+        navigate('/produtos');
+    };
+
     const handleModalClose = () => {
         setIsModalVisible(false);
     };
@@ -154,6 +181,7 @@ function Cliente() {
         setIsModalVisible(false);
     };
 
+    // FUNÇÃO ORIGINAL MANTIDA
     const getImageUrl = (genero) => {
         if (genero === 'Masculino') {
             return 'https://i.pinimg.com/564x/50/f2/91/50f2915c4f23c9643efb1c8f05020f2b.jpg';
@@ -164,122 +192,295 @@ function Cliente() {
         }
     };
 
-    return (
-        <div>
-            <br />
-            <div className="user">
-                <div className="pessoa">
-                    {clienteEncontrado && (
-                        <img src={getImageUrl(clienteEncontrado.genero)} alt="Avatar do cliente" />
-                    )}
-                    <h1 id='h1'><span id='span'>{clienteEncontrado ? clienteEncontrado.nome : ''}!</span></h1>
-                </div>
-                <div className="botoes2">
-                    <Button type="primary" id='red' onClick={handleLogout}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-box-arrow-right" viewBox="0 0 16 16">
-                            <path fillRule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5.5 0 0 0 9.5 2h-8A1.5.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/>
-                            <path fillRule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
-                        </svg>
-                    </Button>
-                    <Link to='/historico'>
-                        <button type="primary" className=''>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="black" className="bi bi-book" viewBox="0 0 16 16">
-                                <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783"/>
-                            </svg>
-                        </button>
-                    </Link>
-                </div>
-            </div>
-            <br />
+    // Funções auxiliares para a nova estrutura
+    const getCategoriaCor = (categoria) => {
+        const cores = {
+            'alimentacao': '#ff6b6b',
+            'restaurante': '#ff6b6b',
+            'vestuario': '#4ecdc4',
+            'moda': '#4ecdc4',
+            'tecnologia': '#45b7d1',
+            'eletronicos': '#45b7d1',
+            'beleza': '#ff9ff3',
+            'cosmeticos': '#ff9ff3',
+            'servicos': '#a4b0be',
+            'outros': '#a4b0be'
+        };
+        return cores['outros'];
+    };
 
-            {clienteEncontrado ? (
-                <div className='container'>
-                    <div>
-                        <h2 id='titulo' style={{ textAlign: 'center' }}>Empresas que você participa!</h2>
-                        <br />
-                        
+    const getCategoriaIcon = () => {
+        return '🏢';
+    };
+
+    return (
+        <div className="cliente-dashboard">
+            {/* Header Section */}
+            <header className="dashboard-header">
+                <div className="header-container">
+                    <div className="user-profile-section">
+                        <div className="user-avatar-container">
+                            <Avatar 
+                                size={80} 
+                                src={clienteEncontrado ? getImageUrl(clienteEncontrado.genero) : ''}
+                                icon={<UserOutlined />}
+                                className="user-avatar"
+                            />
+                        </div>
+                        <div className="user-info">
+                            <Title level={2} className="user-greeting">
+                                Olá, <span className="user-name">{clienteEncontrado ? clienteEncontrado.nome : 'Cliente'}!</span>
+                            </Title>
+                            <Text className="user-email">{clienteEncontrado?.email}</Text>
+                            <div className="user-stats">
+                                <Tag icon={<TeamOutlined />} color="blue">
+                                    {empresas.length} empresas
+                                </Tag>
+                                <Tag icon={<StarFilled />} color="gold">
+                                    {empresas.reduce((total, emp) => total + (emp.bonus_count || 0), 0)} bônus
+                                </Tag>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="header-actions">
+                        <Space size="middle">
+                            <Link to="/historico">
+                                <Button 
+                                    type="default" 
+                                    icon={<BookOutlined />}
+                                    size="large"
+                                    className="action-button"
+                                >
+                                    Meu Histórico
+                                </Button>
+                            </Link>
+                            <Button 
+                                type="primary" 
+                                danger
+                                icon={<LogoutOutlined />}
+                                onClick={handleLogout}
+                                size="large"
+                                className="logout-button"
+                            >
+                                Sair
+                            </Button>
+                        </Space>
+                    </div>
+                </div>
+            </header>
+
+            {/* Main Content */}
+            <main className="dashboard-main">
+                <div className="main-container">
+                    {/* Statistics Section */}
+                    {empresas.length > 0 && (
+                        <section className="stats-section">
+                            <Row gutter={[24, 24]}>
+                                <Col xs={24} sm={8}>
+                                    <Card className="stat-card" bordered={false}>
+                                        <Statistic
+                                            title="Empresas Parceiras"
+                                            value={empresas.length}
+                                            prefix={<ShopOutlined />}
+                                            valueStyle={{ color: '#667eea' }}
+                                        />
+                                    </Card>
+                                </Col>
+                                <Col xs={24} sm={8}>
+                                    <Card className="stat-card" bordered={false}>
+                                        <Statistic
+                                            title="Bônus Acumulados"
+                                            value={empresas.reduce((total, emp) => total + (emp.bonus_count || 0), 0)}
+                                            prefix={<StarFilled />}
+                                            valueStyle={{ color: '#ffd666' }}
+                                        />
+                                    </Card>
+                                </Col>
+                                <Col xs={24} sm={8}>
+                                    <Card className="stat-card" bordered={false}>
+                                        <Statistic
+                                            title="Programas Ativos"
+                                            value={empresas.filter(emp => (emp.bonus_count || 0) > 0).length}
+                                            prefix={<TrophyOutlined />}
+                                            valueStyle={{ color: '#52c41a' }}
+                                        />
+                                    </Card>
+                                </Col>
+                            </Row>
+                        </section>
+                    )}
+
+                    {/* Empresas Section */}
+                    <section className="empresas-section">
+                        <div className="section-header">
+                            <Title level={1} className="section-title">
+                                <ShopOutlined /> Empresas que você participa!
+                            </Title>
+                            <Text className="section-subtitle">
+                                Gerencie seus programas de fidelidade e resgate seus bônus
+                            </Text>
+                        </div>
+
                         {carregando ? (
-                            <p>Buscando empresas...</p>
+                            <div className="loading-section">
+                                <Row gutter={[24, 24]}>
+                                    {[1, 2, 3].map(i => (
+                                        <Col key={i} xs={24} sm={12} lg={8}>
+                                            <Card>
+                                                <Skeleton active avatar paragraph={{ rows: 3 }} />
+                                            </Card>
+                                        </Col>
+                                    ))}
+                                </Row>
+                            </div>
                         ) : empresas.length > 0 ? (
-                            <div className="empresa-grid">
-                                {empresas.map(empresa => (
-                                    <div className='empresa' key={empresa.id}>
-                                        <li id='li' className='empresa'>
-                                            <div 
-                                                className={selectedEmpresaId === empresa.id ? 'empresa-card selected' : 'empresa-card'}
-                                                onClick={() => {
-                                                    localStorage.setItem('selectedEmpresa', JSON.stringify(empresa));
-                                                    navigate('/produtos');
-                                                }}
+                            <div className="empresas-grid">
+                                <Row gutter={[24, 24]}>
+                                    {empresas.map((empresa) => (
+                                        <Col key={empresa.id} xs={24} sm={12} lg={8} xl={6}>
+                                            <Card
+                                                className="empresa-card"
+                                                hoverable
+                                                cover={
+                                                    <div className="empresa-cover">
+                                                        <img
+                                                            alt={empresa.nome}
+                                                            src={empresa.imagem}
+                                                            className="empresa-image"
+                                                            onError={(e) => {
+                                                                e.target.src = 'https://via.placeholder.com/150x150/667eea/ffffff?text=Empresa';
+                                                            }}
+                                                        />
+                                                        <div className="empresa-overlay">
+                                                            <div className="overlay-content">
+                                                                <Button 
+                                                                    type="primary" 
+                                                                    shape="round"
+                                                                    icon={<GiftOutlined />}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleSelectEmpresa(empresa.id);
+                                                                    }}
+                                                                >
+                                                                    Ver Bônus
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                actions={[
+                                                    <Button 
+                                                        type="primary" 
+                                                        onClick={() => handleEmpresaClick(empresa)}
+                                                        block
+                                                    >
+                                                        Ver Produtos
+                                                    </Button>
+                                                ]}
                                             >
-                                                <img 
-                                                    src={empresa.imagem} 
-                                                    className='empresa-img'
-                                                    alt={empresa.nome}
-                                                />
-                                            </div>
-                                            <span className="empresa-nome">{empresa.nome}</span>
-                                        </li>
-                                    </div>
-                                ))}
+                                                <div className="empresa-content">
+                                                    <div className="empresa-header">
+                                                        <div className="categoria-avatar">
+                                                            {getCategoriaIcon()}
+                                                        </div>
+                                                        <Title level={4} className="empresa-name">
+                                                            {empresa.nome}
+                                                        </Title>
+                                                    </div>
+                                                    <div className="empresa-meta">
+                                                        <Tag color={getCategoriaCor()}>
+                                                            Parceira
+                                                        </Tag>
+                                                        <div className="bonus-display">
+                                                            <StarFilled className="bonus-icon" />
+                                                            <Text strong>Bônus disponíveis</Text>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </Card>
+                                        </Col>
+                                    ))}
+                                </Row>
                             </div>
                         ) : (
-                            <div className="nenhuma-empresa">
-                                <div className="mensagem-vazia">
-                                    <svg 
-                                        xmlns="http://www.w3.org/2000/svg" 
-                                        width="64" 
-                                        height="64" 
-                                        fill="currentColor" 
-                                        className="bi bi-building" 
-                                        viewBox="0 0 16 16"
-                                        style={{ color: '#ccc', marginBottom: '16px' }}
-                                    >
-                                        <path d="M4 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM7.5 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM4.5 8a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"/>
-                                        <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm11 0H3v14h3v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V15h3z"/>
-                                    </svg>
-                                    <h3 style={{ color: '#666', marginBottom: '8px' }}>
-                                        Você ainda não participa de nenhuma empresa
-                                    </h3>
-                                    <p style={{ color: '#999', textAlign: 'center' }}>
+                            <div className="empty-section">
+                                <div className="empty-content">
+                                    <CrownOutlined className="empty-icon" />
+                                    <Title level={3}>Nenhuma empresa encontrada</Title>
+                                    <Text>
+                                        Você ainda não participa de nenhuma empresa.
                                         Entre em contato com as empresas para ser adicionado aos seus programas de fidelidade.
-                                    </p>
+                                    </Text>
+                                    <div className="empty-actions">
+                                        <Button 
+                                            type="primary" 
+                                            size="large" 
+                                            icon={<CrownOutlined />}
+                                            onClick={() => message.info('Entre em contato com as empresas para se cadastrar!')}
+                                        >
+                                            Como Participar?
+                                        </Button>
+                                    </div>
                                 </div>
                             </div>
                         )}
-                    </div>
-                    <div className='dir'>
-                        {/* {selectedEmpresaId && (
-                            <div>
-                                <p id='bonusp'>Bônus: {selectedBonusCount}</p>
-                            </div>
-                        )} */}
-                    </div>
+                    </section>
                 </div>
-            ) : (
-                <div className="nenhuma-empresa">
-                                <div className="mensagem-vazia">
-                                    <svg 
-                                        xmlns="http://www.w3.org/2000/svg" 
-                                        width="64" 
-                                        height="64" 
-                                        fill="currentColor" 
-                                        className="bi bi-building" 
-                                        viewBox="0 0 16 16"
-                                        style={{ color: '#ccc', marginBottom: '16px' }}
-                                    >
-                                        <path d="M4 2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM7.5 5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zM4.5 8a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5zm2.5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5zm3.5-.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5z"/>
-                                        <path d="M2 1a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm11 0H3v14h3v-2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5V15h3z"/>
-                                    </svg>
-                                    <h3 style={{ color: '#666', marginBottom: '8px' }}>
-                                        Você ainda não participa de nenhuma empresa
-                                    </h3>
-                                    <p style={{ color: '#999', textAlign: 'center' }}>
-                                        Entre em contato com as empresas para ser adicionado aos seus programas de fidelidade.
-                                    </p>
-                                </div>
+            </main>
+
+            {/* Bonus Modal - Mantendo estrutura original */}
+            <Modal
+                title="Bônus da Empresa"
+                open={isModalVisible}
+                onCancel={handleModalClose}
+                footer={[
+                    <Button key="resgatar" type="primary" onClick={handleResgatarBonus}>
+                        Resgatar Bônus
+                    </Button>,
+                    <Button key="fechar" onClick={handleModalClose}>
+                        Fechar
+                    </Button>
+                ]}
+                className="bonus-modal"
+            >
+                {selectedEmpresaImagem && (
+                    <div className="bonus-modal-content">
+                        <div className="empresa-info">
+                            <Avatar 
+                                size={64} 
+                                src={selectedEmpresaImagem}
+                                className="empresa-avatar"
+                            />
+                            <div className="empresa-details">
+                                <Title level={4}>
+                                    {empresas.find(emp => emp.id === selectedEmpresaId)?.nome}
+                                </Title>
                             </div>
-            )}
+                        </div>
+                        
+                        <div className="bonus-display-modal">
+                            <div className="bonus-count-large">
+                                {selectedBonusCount}
+                            </div>
+                            <Text className="bonus-label">bônus disponíveis</Text>
+                        </div>
+
+                        {selectedBonusCount > 0 ? (
+                            <div className="bonus-actions">
+                                <Text>Você pode resgatar seus bônus por produtos exclusivos!</Text>
+                            </div>
+                        ) : (
+                            <div className="no-bonus-message">
+                                <Text type="secondary">
+                                    Você ainda não possui bônus nesta empresa.
+                                    Continue comprando para acumular!
+                                </Text>
+                            </div>
+                        )}
+                    </div>
+                )}
+            </Modal>
         </div>
     );
 }
